@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request
-from woordrader import WoordRader
+from tweevoortwaalf.woordrader import WoordRader
 app = Flask(__name__)
 
 @app.route('/')
