@@ -4,6 +4,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    global twaalfletterwoord
+    twaalfletterwoord = WoordRader()
     return render_template('index.html', state=twaalfletterwoord.state)
 
 @app.route('/buy_letter', methods=['POST'])
@@ -28,5 +30,4 @@ def play_again():
     return jsonify({"message": "Game reset."})
 
 if __name__ == '__main__':
-    twaalfletterwoord = WoordRader()
     app.run(debug=True)
