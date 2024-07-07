@@ -4,11 +4,12 @@ version = "0.1.0"
 description = "Play all word games from the dutch game show Twee Voor Twaalf."
 authors = [{name ="Sjoerd Cornelissen"}]
 readme = "README.md"
+requires-python = ">=3.9"
 dependencies = [
-    "pandas~=2.2.2",
     "flask~=3.0.3",
+    "gunicorn~=22.0.0",
+    "pandas~=2.2.2",
 ]
-requires-python = ">= 3.10"
 
 [build-system]
 requires = ["setuptools", "wheel"]
