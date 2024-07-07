@@ -3,8 +3,6 @@ import time
 import os
 import csv
 
-from IPython.display import clear_output
-
 import pandas as pd
 
 
@@ -174,7 +172,6 @@ class WoordRader:
     def play(self, write=True):
         self.starttime = time.time()
         while self.guess is None:
-            clear_output(True)
             self.show_guess_panel()
             inp = input("Enter guess or placement of letter to buy")
             try:
