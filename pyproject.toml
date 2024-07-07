@@ -2,7 +2,7 @@
 name = "twee_voor_twaalf"
 version = "0.1.0"
 description = "Play all word games from the dutch game show Twee Voor Twaalf."
-authors = ["Sjoerd Cornelissen"]
+authors = [{name ="Sjoerd Cornelissen"}]
 readme = "README.md"
 dependencies = [
     "pandas~=2.2.2",
@@ -17,5 +17,5 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["tweevoortwaalf"]
 
-[tool.setuptools.package_data]
-"woordrader_project" = ["data/wordlist.csv"]
+[tool.setuptools.package-data]
+"tweevoortwaalf" = ["Data/wordlist.csv"]
