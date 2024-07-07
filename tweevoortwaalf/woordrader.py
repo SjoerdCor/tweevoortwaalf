@@ -54,12 +54,9 @@ class WoordRader:
         self.guesstime = None
 
     def select_puzzle(self):
-        suitability_cols = ['AllLowercase', 'AllBasicAlpha', 'ZelfstandigNaamwoord', 'IsEnkelvoud']
+        wordlist = pd.read_csv('tweevoortwaalf/Data/suitable_12_letter_words.txt', header=None).squeeze()
 
-        df = pd.read_csv('tweevoortwaalf/Data/wordlist.csv').assign(Suitable = lambda df: df[suitability_cols].fillna(False).all('columns'))
-
-        self.answer = (df
-            .query("Suitable & Length == @self.n_letters")["Word"]
+        self.answer = (wordlist
             .sample(1)
             .squeeze()
         )
