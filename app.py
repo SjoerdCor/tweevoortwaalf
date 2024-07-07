@@ -1,6 +1,14 @@
+import os
+
 from flask import Flask, render_template, jsonify, request
+from dotenv import load_dotenv
 from tweevoortwaalf.woordrader import WoordRader
+
+load_dotenv()
+
 app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
+
 
 @app.route('/')
 def index():
