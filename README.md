@@ -13,3 +13,9 @@ letters as possible
 This repository improves on other options on the internet to play these games in two ways
 * The word list is much better, taking only nouns and actually existing words into account
 * The Woordrader/anagram game was not available including buying letters
+
+## Installation guide
+This package can be installed by running `pip install .` 
+You can run the woordrader web-app by running  `python app.py`; this requires a 
+FLASK_SECRET_KEY in the environment. This is most easily done by creating a file
+`.env` containing `FLASK_SECRET_KEY=your_secret_key_here`
