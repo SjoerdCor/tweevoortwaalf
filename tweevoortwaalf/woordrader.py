@@ -56,7 +56,7 @@ class WoordRader:
     def select_puzzle(self):
         suitability_cols = ['AllLowercase', 'AllBasicAlpha', 'ZelfstandigNaamwoord', 'IsEnkelvoud']
 
-        df = pd.read_csv('Data/wordlist.csv').assign(Suitable = lambda df: df[suitability_cols].fillna(False).all('columns'))
+        df = pd.read_csv('tweevoortwaalf/Data/wordlist.csv').assign(Suitable = lambda df: df[suitability_cols].fillna(False).all('columns'))
 
         self.answer = (df
             .query("Suitable & Length == @self.n_letters")["Word"]
