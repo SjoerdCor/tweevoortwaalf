@@ -7,7 +7,7 @@ recreate a word - which must be guessed
 missing. The word can go either way around the circle, and must be guessed
 * The Woordrader, which is the anagram game at the end of the game show, in which
 12 letters are shown, some of which may be missing and others of which may be wrong. One can buy letters
-so they are shown in the correct place. THe aim is to guess the 12 letter word while buying as few 
+so they are shown in the correct place. THe aim is to guess the 12 letter word while buying as few
 letters as possible
 
 This repository improves on other options on the internet to play these games in two ways
@@ -15,11 +15,12 @@ This repository improves on other options on the internet to play these games in
 * The Woordrader/anagram game was not available including buying letters
 
 ## Installation guide
-Clone this repo. 
+Clone this repo.
 
 This package can be installed by running `pip install .` .
 To also be able to run the word analysis, run `pip install .[analysis]`
+If you want to help develop this package, run `pip install .[dev]`
 
-You can run the woordrader web-app by running  `python app.py`; this requires a 
+You can run the woordrader web-app by running  `python app.py`; this requires a
 FLASK_SECRET_KEY in the environment. This is most easily done by creating a file
 `.env` containing `FLASK_SECRET_KEY=your_secret_key_here`
