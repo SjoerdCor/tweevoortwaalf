@@ -15,7 +15,11 @@ This repository improves on other options on the internet to play these games in
 * The Woordrader/anagram game was not available including buying letters
 
 ## Installation guide
-This package can be installed by running `pip install .` 
+Clone this repo. 
+
+This package can be installed by running `pip install .` .
+To also be able to run the word analysis, run `pip install .[analysis]`
+
 You can run the woordrader web-app by running  `python app.py`; this requires a 
 FLASK_SECRET_KEY in the environment. This is most easily done by creating a file
 `.env` containing `FLASK_SECRET_KEY=your_secret_key_here`
