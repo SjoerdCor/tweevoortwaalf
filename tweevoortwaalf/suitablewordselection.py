@@ -11,7 +11,7 @@ def main():
         "ZelfstandigNaamwoord",
         "IsEnkelvoud",
     ]
-    df = pd.read_csv("../Data/wordlist.csv").assign(
+    df = pd.read_csv("Data/wordlist.csv").assign(
         Suitable=lambda df: df[suitability_cols].fillna(False).all("columns")
     )
 
