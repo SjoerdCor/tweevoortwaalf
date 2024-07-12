@@ -1,16 +1,21 @@
+"""Base class for paardensprong and taartpuzzel"""
+
+import abc
+import csv
+import os
 import random
 import time
-import os
-import csv
 
 import pandas as pd
 
 
 class NonUniqueQuizException(Exception):
-    pass
+    """Raised when a puzzle has multiple solutions"""
 
 
 class Woordpuzzel:
+    """Base class for paardensprong and taartpuzzel"""
+
     def __init__(self, answer=None, direction=None, startpoint=None):
         if answer is None:
             self.select_puzzle()
@@ -24,15 +29,38 @@ class Woordpuzzel:
         self.guess = None
         self.correct = None
 
+    @property
+    @abc.abstractmethod
+    def n_letters(self) -> int:
+        """The number of letters in the puzzle"""
+
+    @abc.abstractmethod
+    def _unique_solution(self):
+        """Determines whether puzzle has a unique solutions. Must be implemented by subclasses"""
+
+    @abc.abstractmethod
+    def create_puzzle(self):
+        """Creates the puzzle. Must be implemented by subclasses"""
+
+    @abc.abstractmethod
+    def show_puzzle(self, puzzle):
+        """Shows the puzzle as image. Must be implemented by subclasses"""
+
     def select_puzzle(self):
-        suitability_cols = ['AllLowercase', 'AllBasicAlpha', 'ZelfstandigNaamwoord', 'IsEnkelvoud']
+        """Selects the puzzle answer"""
+        suitability_cols = [
+            "AllLowercase",
+            "AllBasicAlpha",
+            "ZelfstandigNaamwoord",
+            "IsEnkelvoud",
+        ]
 
-        df = pd.read_csv('Data/wordlist.csv').assign(Suitable = lambda df: df[suitability_cols].fillna(False).all('columns'))
+        df = pd.read_csv("Data/wordlist.csv").assign(
+            Suitable=lambda df: df[suitability_cols].fillna(False).all("columns")
+        )
 
-        self.answer = (df
-            .query("Suitable & Length == @self.n_letters")["Word"]
-            .sample(1)
-            .squeeze()
+        self.answer = (
+            df.query("Suitable & Length == @self.n_letters")["Word"].sample(1).squeeze()
         )
 
     def _write_to_file(self):
@@ -46,11 +74,13 @@ class Woordpuzzel:
                 w.writeheader()
             w.writerow(self.__dict__)
 
-
-    def clean_guess(self, guess):
+    @staticmethod
+    def clean_guess(guess):
+        """Make strings comparable"""
         return guess.lower().replace("ij", "\u0133")
 
     def play(self, write=True):
+        """Play the game interactively"""
         if not self._unique_solution():
             raise NonUniqueQuizException(f"More than one solution for {self.answer!r}")
 

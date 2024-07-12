@@ -1,6 +1,5 @@
 """Write files for acceptable words for Twee voor Twaalf for each game type"""
 
-
 import pandas as pd
 
 

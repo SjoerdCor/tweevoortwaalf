@@ -1,10 +1,11 @@
+"""Class to play the woordrader game from twee voor twaalf"""
+
+import csv
+import os
 import random
 import time
-import os
-import csv
 
 import pandas as pd
-
 
 LETTER_OCCURENCE_FIRST_POSITION = {  # based on words of all length
     "b": 0.09775666589860389,
@@ -38,11 +39,14 @@ LETTER_OCCURENCE_FIRST_POSITION = {  # based on words of all length
 
 
 class WoordRader:
+    """Class to play the woordrader game from twee voor twaalf"""
+
     n_letters = 12
 
     def __init__(self, answer=None):
+        # TODO: input validation
         if answer is None:
-            answer = self.select_puzzle()
+            self.select_puzzle()
         else:
             self.answer = answer
 
@@ -54,24 +58,20 @@ class WoordRader:
         self.guesstime = None
 
     def select_puzzle(self):
-        wordlist = pd.read_csv('tweevoortwaalf/Data/suitable_12_letter_words.txt', header=None).squeeze()
+        """Select a random word as an anagram"""
+        wordlist = pd.read_csv(
+            "tweevoortwaalf/Data/suitable_12_letter_words.txt", header=None
+        ).squeeze()
 
-        self.answer = (wordlist
-            .sample(1)
-            .squeeze()
-        )
-
+        self.answer = wordlist.sample(1).squeeze()
 
     def _generate_starting_position(self, p_wrong=0.05, p_unknown=0.05):
-        # TODO: validate correct p's
-
         state = {}
 
         quizpositions = random.sample(range(self.n_letters), self.n_letters)
         for answer_position, (letter, quizposition) in enumerate(
             zip(self.answer, quizpositions)
         ):
-            # TODO: allow for missing answers
             random_nr = random.random()
             if random_nr < p_wrong:
                 shown_letter = random.choices(
@@ -100,7 +100,7 @@ class WoordRader:
         )
 
         knownletters = []
-        for quizplacement, state in by_answeringposition.items():
+        for _, state in by_answeringposition.items():
             if state["bought"]:
                 if state["correct"]:
                     knownletters.append(state["true_letter"])
@@ -111,7 +111,7 @@ class WoordRader:
         return knownletters
 
     def show_guess_panel(self):
-
+        """Print the current game state: letters in top and bottom row"""
         by_quizposition = dict(sorted(self.state.items()))
         print(
             " ".join(
@@ -125,19 +125,28 @@ class WoordRader:
         knownletters = self._calculate_known_letters()
         print(" ".join(l.ljust(2) for l in knownletters))
 
-    def buy_letter(self, i):
-        if i not in range(1, self.n_letters + 1):
-            return ValueError(f"i must be an int from 1 to {self.n_letters}")
-        if self.state[i]["bought"]:
-            return ValueError(f"{i} already bought!")
+    def buy_letter(self, top_row_position: int):
+        """Buy the letter of a position in the top row
 
-        # TODO: Add Joostens comment "The {letter} from {number} goes to {answer_number}"
+        Will then be shown in the bottom row in the correct place
+        """
+        if top_row_position not in range(1, self.n_letters + 1):
+            raise ValueError(
+                f"top_row_position must be an int from 1 to {self.n_letters}"
+            )
+        if self.state[top_row_position]["bought"]:
+            raise ValueError(f"{top_row_position} already bought!")
+
         self.bought_letters.append(
-            (self.state[i]["shown_letter"], self.state[i]["correct"])
+            (
+                self.state[top_row_position]["shown_letter"],
+                self.state[top_row_position]["correct"],
+            )
         )
-        self.state[i]["bought"] = True
+        self.state[top_row_position]["bought"] = True
 
     def make_guess(self, guess):
+        """Handle the guess as made by the user"""
         self.guesstime = time.time() - self.starttime
         self.guess = guess.lower().replace("ij", "\u0133")
         if self.guess == self.answer:
@@ -167,6 +176,7 @@ class WoordRader:
             w.writerow(results)
 
     def play(self, write=True):
+        """Play one round of the Woordrader game as text"""
         self.starttime = time.time()
         while self.guess is None:
             self.show_guess_panel()
