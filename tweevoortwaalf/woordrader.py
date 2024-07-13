@@ -4,6 +4,7 @@ import csv
 import os
 import random
 import time
+from typing import List
 
 import pandas as pd
 
@@ -94,36 +95,58 @@ class WoordRader:
             }
         return state
 
-    def _calculate_known_letters(self):
+    def get_bottom_row(self) -> List[str]:
+        """Calculate what to show on the bottom row
+
+        Correct, bought letters in the right place, correct, wrong letters show
+        up as "?", and empty string if the letter is not bought
+
+        Returns
+        -------
+        List[str]
+            the twelve positions and what must be shown on each position
+        """
         by_answeringposition = dict(
             sorted(self.state.items(), key=lambda item: item[1]["answer_position"])
         )
 
-        knownletters = []
+        bottom_row = []
         for _, state in by_answeringposition.items():
             if state["bought"]:
                 if state["correct"]:
-                    knownletters.append(state["true_letter"])
+                    bottom_row.append(state["true_letter"])
                 else:
-                    knownletters.append("?")
+                    bottom_row.append("?")
             else:
-                knownletters.append("")
-        return knownletters
+                bottom_row.append("")
+        return bottom_row
+
+    def get_top_row(self) -> List[str]:
+        """Get what to show for the top row
+
+        (Possibly incorrect) letters which are not bought, empty strings if the letter
+        is bought
+
+        Returns
+        -------
+        List[str]
+            The twelve positions
+        """
+        by_quizposition = dict(sorted(self.state.items()))
+        top_row = [
+            state["shown_letter"] if not state["bought"] else ""
+            for _, state in by_quizposition.items()
+        ]
+        return top_row
 
     def show_guess_panel(self):
         """Print the current game state: letters in top and bottom row"""
-        by_quizposition = dict(sorted(self.state.items()))
-        print(
-            " ".join(
-                state["shown_letter"].ljust(2) if not state["bought"] else "  "
-                for quizplacement, state in by_quizposition.items()
-            )
-        )
+        top_row = self.get_top_row()
+        bottom_row = self.get_bottom_row()
 
+        print(" ".join(l.ljust(2) for l in top_row))
         print(" ".join(str(i).zfill(2) for i in range(1, self.n_letters + 1)))
-
-        knownletters = self._calculate_known_letters()
-        print(" ".join(l.ljust(2) for l in knownletters))
+        print(" ".join(l.ljust(2) for l in bottom_row))
 
     def buy_letter(self, top_row_position: int):
         """Buy the letter of a position in the top row
