@@ -4,7 +4,7 @@ import csv
 import os
 import random
 import time
-from typing import List
+from typing import List, Tuple
 
 import pandas as pd
 
@@ -148,25 +148,42 @@ class WoordRader:
         print(" ".join(str(i).zfill(2) for i in range(1, self.n_letters + 1)))
         print(" ".join(l.ljust(2) for l in bottom_row))
 
-    def buy_letter(self, top_row_position: int):
+    def buy_letter(self, top_row_position: int) -> Tuple[int, str]:
         """Buy the letter of a position in the top row
 
         Will then be shown in the bottom row in the correct place
+
+        Parameters
+        ----------
+        top_row_position : int
+            The position of the letter to be bought
+
+        Returns
+        -------
+            bottom_row_position : int
+                THe position where the letter will land
+            bottom_row_str : str
+                The single character (true letter or "?" if incorrect) to be shown in the bottom row
         """
         if top_row_position not in range(1, self.n_letters + 1):
             raise ValueError(
                 f"top_row_position must be an int from 1 to {self.n_letters}"
             )
-        if self.state[top_row_position]["bought"]:
+
+        top_row_state = self.state[top_row_position]
+        if top_row_state["bought"]:
             raise ValueError(f"{top_row_position} already bought!")
 
         self.bought_letters.append(
             (
-                self.state[top_row_position]["shown_letter"],
-                self.state[top_row_position]["correct"],
+                top_row_state["shown_letter"],
+                top_row_state["correct"],
             )
         )
-        self.state[top_row_position]["bought"] = True
+        top_row_state["bought"] = True
+        if top_row_state["correct"]:
+            return top_row_state["answer_position"], top_row_state["true_letter"]
+        return top_row_state["answer_position"], "?"
 
     def make_guess(self, guess):
         """Handle the guess as made by the user"""
