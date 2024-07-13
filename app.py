@@ -40,7 +40,7 @@ def guess():
     answer = session["answer"].lower()
     result = (
         "Correct"
-        if guess_input.lower().replace("ij", "\u0133") == answer
+        if guess_input.lower().strip().replace("ij", "\u0133") == answer
         else "Incorrect"
     )
     result += f"! The correct answer is {answer!r}"
