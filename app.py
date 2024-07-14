@@ -3,7 +3,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
 from tweevoortwaalf.woordrader import WoordRader
 
@@ -16,11 +16,29 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 @app.route("/")
 def index():
     """Home page"""
-    if "game_state" not in session:
-        twaalfletterwoord = WoordRader()
-        session["game_state"] = twaalfletterwoord.state
-        session["answer"] = twaalfletterwoord.answer
-    return render_template("index.html", state=session["game_state"])
+    game_active = session.get("game_active", False)
+    game_state = session.get("game_state", {})
+    return render_template("index.html", state=game_state, active=game_active)
+
+
+@app.route("/new_game")
+def new_game():
+    """Start a new game"""
+    mode = request.args.get("mode", "normal")
+    if mode == "easy":
+        p_wrong = 0
+    elif mode == "normal":
+        p_wrong = 0.05
+    else:
+        raise ValueError(f"Unknown mode {mode!r}")
+    twaalfletterwoord = WoordRader(p_unknown=p_wrong, p_wrong=p_wrong)
+    twaalfletterwoord.initialize_game()
+    session["game_state"] = twaalfletterwoord.state
+    session["answer"] = twaalfletterwoord.answer
+    session["game_active"] = True
+    session["mode"] = mode
+
+    return redirect(url_for("index"))
 
 
 @app.route("/buy_letter", methods=["POST"])
@@ -44,15 +62,12 @@ def guess():
         else "Incorrect"
     )
     result += f"! The correct answer is {answer!r}"
+
+    session["game_active"] = False
+    session["answer"] = None
+    session["game_state"] = {}
+
     return jsonify({"result": result})
-
-
-@app.route("/play_again", methods=["POST"])
-def play_again():
-    """Set up a new round"""
-    session.pop("game_state", None)
-    session.pop("answer", None)
-    return jsonify({"message": "Game reset."})
 
 
 if __name__ == "__main__":

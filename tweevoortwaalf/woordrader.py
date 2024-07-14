@@ -44,29 +44,38 @@ class WoordRader:
 
     n_letters = 12
 
-    def __init__(self, answer=None):
+    def __init__(self, answer=None, p_wrong=0.05, p_unknown=0.05):
         # TODO: input validation
-        if answer is None:
-            self.select_puzzle()
+        self.answer = answer
+        if self.answer is None:
+            self.state = {
+                i: {
+                    "shown_letter": "",
+                    "answer_position": i,
+                    "bought": False,
+                    "correct": True,
+                    "true_letter": "",
+                }
+                for i in range(1, 13)
+            }
         else:
-            self.answer = answer
+            self._generate_starting_position()
 
-        self.state = self._generate_starting_position()
+        self.p_wrong = p_wrong
+        self.p_unknown = p_unknown
 
         self.guess = None
-        self.bought_letters = []
         self.starttime = None
         self.guesstime = None
 
-    def select_puzzle(self):
-        """Select a random word as an anagram"""
+    def _select_puzzle(self):
+        """Choose a new word to play"""
         wordlist = pd.read_csv(
             "tweevoortwaalf/Data/suitable_12_letter_words.txt", header=None
         ).squeeze()
-
         self.answer = wordlist.sample(1).squeeze()
 
-    def _generate_starting_position(self, p_wrong=0.05, p_unknown=0.05):
+    def _generate_starting_position(self):
         state = {}
 
         quizpositions = random.sample(range(self.n_letters), self.n_letters)
@@ -74,13 +83,13 @@ class WoordRader:
             zip(self.answer, quizpositions)
         ):
             random_nr = random.random()
-            if random_nr < p_wrong:
+            if random_nr < self.p_wrong:
                 shown_letter = random.choices(
                     list(LETTER_OCCURENCE_FIRST_POSITION.keys()),
                     list(LETTER_OCCURENCE_FIRST_POSITION.values()),
                 )[0]
                 correct = False
-            elif p_wrong < random_nr < p_wrong + p_unknown:
+            elif self.p_wrong < random_nr < self.p_wrong + self.p_unknown:
                 shown_letter = "-"
                 correct = False
             else:
@@ -93,7 +102,16 @@ class WoordRader:
                 "correct": correct,
                 "true_letter": letter,
             }
-        return state
+        self.state = state
+
+    def initialize_game(self):
+        """Set up a new round of the anagram game"""
+        self._select_puzzle()
+        self._generate_starting_position()
+
+        self.guess = None
+        self.starttime = None
+        self.guesstime = None
 
     def get_bottom_row(self) -> List[str]:
         """Calculate what to show on the bottom row
@@ -174,12 +192,6 @@ class WoordRader:
         if top_row_state["bought"]:
             raise ValueError(f"{top_row_position} already bought!")
 
-        self.bought_letters.append(
-            (
-                top_row_state["shown_letter"],
-                top_row_state["correct"],
-            )
-        )
         top_row_state["bought"] = True
         if top_row_state["correct"]:
             return top_row_state["answer_position"], top_row_state["true_letter"]
@@ -203,7 +215,6 @@ class WoordRader:
             "Guess": self.guess,
             "Starttime": self.starttime,
             "Guesstime": self.guesstime,
-            "BoughtLetters": self.bought_letters,
         }
         by_quizposition = dict(sorted(self.state.items()))
         for quizposition, state in by_quizposition.items():
