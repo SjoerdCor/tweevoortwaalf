@@ -1,3 +1,4 @@
+aanbidder
 aanbieder
 aanbodlĳn
 aandenken
@@ -28,8 +29,10 @@ abdicatie
 aberratie
 absolutie
 absorptie
+academica
 accordeon
 achterban
+achterend
 achterham
 achterste
 achteruit
@@ -103,6 +106,7 @@ antraciet
 apartheid
 aperitief
 apoplexie
+apotheker
 apotheose
 appelboom
 appelflap
@@ -125,6 +129,7 @@ arsenicum
 artotheek
 aspiratie
 assemblee
+assistent
 astroloog
 astronoom
 asymptoot
@@ -161,6 +166,7 @@ ballotage
 ballpoint
 bamischĳf
 banenpool
+bankkaart
 barenswee
 barkeeper
 barnsteen
@@ -170,9 +176,11 @@ basenpaar
 basgitaar
 basilicum
 basketbal
+bavaroise
 beademing
 bebouwing
 becquerel
+bedelares
 bedelstaf
 bedenking
 bedenksel
@@ -378,6 +386,7 @@ bultenaar
 busdienst
 buurthuis
 buurvrouw
+cabriolet
 cadeaubon
 cafetaria
 calvinist
@@ -409,11 +418,13 @@ cellulose
 ceremonie
 champagne
 charlatan
+chauffeur
 chemokuur
 chipkaart
 chirurgie
 chlamydia
 chlorofyl
+chocolade
 cĳfercode
 cĳferlĳst
 classicus
@@ -513,8 +524,10 @@ dertiende
 dertigste
 deserteur
 desperado
+diabetica
 diafragma
 diagonaal
+dichteres
 dichtheid
 dichtvorm
 dichtwerk
@@ -549,6 +562,8 @@ doedelzak
 doeleinde
 doelgroep
 doelsaldo
+dolksteek
+dolkstoot
 domicilie
 dompelaar
 donderdag
@@ -634,6 +649,7 @@ enkelspel
 enkelvoud
 entourage
 entrecote
+enveloppe
 epilepsie
 ereburger
 eredienst
@@ -644,6 +660,8 @@ erfgenaam
 ergonomie
 espenblad
 estafette
+esthetica
+esthetiek
 estuarium
 ethologie
 etiquette
@@ -680,7 +698,6 @@ fabricaat
 fabricage
 fabrikant
 facsimile
-faculteit
 falangist
 fanaticus
 fanatisme
@@ -704,6 +721,8 @@ formateur
 formulier
 forsythia
 fotoalbum
+fotograaf
+fotografe
 fotokopie
 fotomodel
 fotoshoot
@@ -765,6 +784,7 @@ gevangene
 gevogelte
 gewestweg
 gezinspak
+gifmenger
 gladiator
 gladjanus
 glasfiber
@@ -846,6 +866,7 @@ hectogram
 hedonisme
 heenkomen
 heerschap
+heerseres
 heethoofd
 hegemonie
 heildronk
@@ -884,6 +905,7 @@ hondenhok
 honderdje
 hoofddoek
 hoofddoel
+hoofdeind
 hoofdhaar
 hoofdknik
 hoofdluis
@@ -914,6 +936,7 @@ huiskamer
 huisvader
 huisvrouw
 huivering
+huldeblĳk
 hulpouder
 humanisme
 hutkoffer
@@ -1002,6 +1025,8 @@ kalknagel
 kalksteen
 kampement
 kandelaar
+kandidaat
+kandidate
 kangoeroe
 kannibaal
 kanselier
@@ -1098,6 +1123,7 @@ koelwater
 kofferbak
 koffiedik
 koffietĳd
+koikarper
 kokosmelk
 kokosnoot
 kokospalm
@@ -1172,6 +1198,7 @@ landloper
 landmacht
 landmeter
 landschap
+landvoogd
 lapjeskat
 lapmiddel
 lariekoek
@@ -1185,6 +1212,7 @@ leeghoofd
 leegloper
 leegstand
 leenwoord
+leerlinge
 leerstoel
 leestafel
 leesteken
@@ -1273,11 +1301,13 @@ marjolein
 marketeer
 marketing
 markiezin
+marktprĳs
 marktvorm
 marmelade
 marsepein
 martelaar
 maskerade
+masochist
 massagraf
 materiaal
 materieel
@@ -1370,6 +1400,7 @@ motorpech
 motorrace
 muizenval
 multiplex
+multoband
 musketier
 muskusrat
 muurbloem
@@ -1513,6 +1544,7 @@ ordonnans
 organisme
 organizer
 origineel
+orthopeed
 ossenhaas
 ouderling
 outillage
@@ -1549,6 +1581,7 @@ paragraaf
 parameter
 paratyfus
 parelhoen
+parelmoer
 parlement
 partituur
 partizaan
@@ -1567,9 +1600,11 @@ paviljoen
 pechvogel
 pedagogie
 pedofilie
+peettante
 peetvader
 peildatum
 pelsjager
+penvriend
 pepermunt
 pepernoot
 pepmiddel
@@ -1651,6 +1686,7 @@ predicaat
 predikant
 preparaat
 presentie
+president
 presidium
 prestatie
 pretentie
@@ -1719,6 +1755,7 @@ reflector
 regelmaat
 regelneef
 regenboog
+regenjack
 regentaat
 regenworm
 regenwoud
@@ -1747,6 +1784,7 @@ resolutie
 resorptie
 resultaat
 retriever
+reumatiek
 reuzenrad
 revelatie
 revolutie
@@ -1761,6 +1799,7 @@ rinoceros
 riolering
 rivierarm
 robbertje
+roeispaan
 rolgordĳn
 rolkoffer
 romancier
@@ -1803,6 +1842,7 @@ samenstel
 sarcofaag
 satelliet
 schaarste
+schaatser
 schandaal
 scharnier
 schatkist
@@ -1823,6 +1863,7 @@ schlemiel
 schnabbel
 schnitzel
 schoeisel
+scholiere
 schooltas
 schooltĳd
 schoonzus
@@ -1837,6 +1878,7 @@ schutting
 scorebord
 sculptuur
 secondant
+seminarie
 sentiment
 september
 sequentie
@@ -1963,6 +2005,7 @@ stadsmuur
 stadspark
 stadstaat
 stafkaart
+stagiaire
 stagnatie
 staketsel
 stalletje
@@ -2008,6 +2051,7 @@ stoelgang
 stoeprand
 stokbrood
 stokpaard
+stommerik
 stoofpeer
 stookolie
 stoomboot
@@ -2099,6 +2143,7 @@ tegenslag
 tegenspel
 tegenwind
 tegoedbon
+tekenares
 tekendoos
 tekenfilm
 tektoniek
@@ -2109,6 +2154,7 @@ teletekst
 televisie
 tennisarm
 tennisbal
+tennisser
 terpentĳn
 terrarium
 terrorist
@@ -2126,6 +2172,7 @@ theezakje
 themapark
 thematiek
 theologie
+therapeut
 thuisclub
 thuishulp
 thuisland
@@ -2159,6 +2206,7 @@ torenflat
 torenvalk
 totempaal
 tournedos
+tovenares
 toverheks
 traagheid
 traktatie
@@ -2231,6 +2279,7 @@ veehouder
 veelvraat
 veenbrand
 veestapel
+veevoeder
 vegetatie
 veldbloem
 veldtocht
@@ -2263,7 +2312,6 @@ vertelsel
 vertering
 vertoning
 vervanger
-verveling
 vervuiler
 verwering
 verwĳzing
@@ -2286,6 +2334,7 @@ viltstift
 vingertop
 virologie
 visafslag
+visagiste
 visionair
 visitatie
 visvangst
@@ -2355,8 +2404,10 @@ vrĳhandel
 vrĳplaats
 vrĳspraak
 vrouwmens
+vuilstort
 vuistslag
 vurenhout
+vuurlinie
 vuurproef
 vuursteen
 vuurwapen
@@ -2383,6 +2434,7 @@ washandje
 wasknĳper
 wasmiddel
 wasstraat
+waterbouw
 waterdamp
 watergeus
 waterĳsje
@@ -2400,6 +2452,7 @@ webserver
 webwinkel
 wederhoor
 weduwnaar
+weekeinde
 weekmaker
 weerkaart
 weerklank
@@ -2457,6 +2510,7 @@ woongroep
 woonkamer
 woonschip
 woonwagen
+woordkeus
 woudloper
 wreedaard
 wreedheid
