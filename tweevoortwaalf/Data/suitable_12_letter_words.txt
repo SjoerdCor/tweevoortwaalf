@@ -59,6 +59,7 @@ autorĳschool
 avondkleding
 baanwedstrĳd
 bagagedrager
+bahcosleutel
 bakerpraatje
 baliekluiver
 ballenjongen
@@ -158,6 +159,7 @@ bruidssuiker
 buikdanseres
 buitendienst
 buitenkansje
+buitenlander
 buitenwereld
 buitenwipper
 bumperklever
@@ -355,6 +357,7 @@ hoofdpersoon
 hooggebergte
 hoogspanning
 hoogteziekte
+hostcomputer
 housewarming
 huishoudgeld
 huishoudster
@@ -517,6 +520,7 @@ marktaandeel
 marktwerking
 marsmannetje
 materialisme
+meesterbrein
 meesterschap
 mensenhandel
 mensenkennis
