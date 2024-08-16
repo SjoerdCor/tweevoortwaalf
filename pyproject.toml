@@ -10,7 +10,8 @@ dependencies = [
     "gunicorn~=22.0.0",
     "pandas~=2.2.2",
     "python-dotenv~=1.0.1",
-]
+    "psycopg~=3.2.1",
+    ]
 
 [project.optional-dependencies]
 analysis = ["scikit-learn~=1.5.1", "numpy~=2.0.0", "ipykernel~=6.29.5", "matplotlib~=3.9.1"]

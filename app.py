@@ -1,7 +1,9 @@
 """"The app to run Twee Voor Twaalf woordrader"""
 
+import datetime
 import os
 
+import psycopg
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
@@ -38,6 +40,36 @@ def new_game():
     session["game_active"] = True
     session["mode"] = mode
 
+    database_url = os.getenv("DATABASE_URL")
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO woordrader.games (
+                        start_time, answer, mode
+                        ) VALUES (
+                    %s, %s, %s
+                    ) RETURNING game_id;"""
+            cur.execute(
+                query, (datetime.datetime.now(), twaalfletterwoord.answer, mode)
+            )
+            gameid = cur.fetchone()[0]
+            letterplacement_dct = tuple(
+                {
+                    "game_id": gameid,
+                    "position": k + 1,
+                    "shown_letter": v["shown_letter"],
+                    "correct": v["correct"],
+                }
+                for k, v in twaalfletterwoord.state.items()
+            )
+            cur.executemany(
+                """INSERT INTO woordrader.shownletters (
+                    game_id, position, shown_letter, correct
+                ) VALUES (
+                    %(game_id)s, %(position)s, %(shown_letter)s, %(correct)s
+                )""",
+                letterplacement_dct,
+            )
+            conn.commit()
     return redirect(url_for("index"))
 
 
