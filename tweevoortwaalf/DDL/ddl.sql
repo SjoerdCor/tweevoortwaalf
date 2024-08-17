@@ -22,3 +22,10 @@ CREATE TABLE IF NOT EXISTS woordrader.guesses (
     guess VARCHAR(15) NOT NULL,
     correct BOOLEAN NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS woordrader.boughtletters (
+    buyevent_id SERIAL PRIMARY KEY,
+    game_id INT REFERENCES woordrader.games(game_id) ON DELETE CASCADE,
+    letterposition INT NOT NULL,
+    buytime TIMESTAMP NOT NULL,
+);

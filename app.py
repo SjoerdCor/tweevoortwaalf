@@ -82,6 +82,20 @@ def buy_letter():
     data = request.json
     quizposition = data.get("quizposition")
     session["game_state"][quizposition]["bought"] = True
+
+    database_url = os.getenv("DATABASE_URL")
+
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO woordrader.boughtletters (
+                        game_id, letterposition, buytime
+                        ) VALUES (
+                    %s, %s, %s
+                    );"""
+            cur.execute(
+                query, (session["gameid"], quizposition, datetime.datetime.now())
+            )
+
     return jsonify(session["game_state"])
 
 
