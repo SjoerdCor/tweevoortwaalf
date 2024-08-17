@@ -1,16 +1,24 @@
 CREATE SCHEMA IF NOT EXISTS woordrader;
 
-CREATE TABLE woordrader.games (
+CREATE TABLE IF NOT EXISTS  woordrader.games (
     game_id SERIAL PRIMARY KEY,
     start_time TIMESTAMP NOT NULL,
     answer CHAR(12) NOT NULL,
     mode VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE woordrader.shownletters (
+CREATE TABLE IF NOT EXISTS woordrader.shownletters (
     letterplacement_id SERIAL PRIMARY KEY,
     game_id INT REFERENCES woordrader.games(game_id) ON DELETE CASCADE,
     position INT NOT NULL,
     shown_letter CHAR(1) NOT NULL,
+    correct BOOLEAN NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS woordrader.guesses (
+    guess_id SERIAL PRIMARY KEY,
+    game_id INT REFERENCES woordrader.games(game_id) ON DELETE CASCADE,
+    guess_time TIMESTAMP NOT NULL,
+    guess VARCHAR(15) NOT NULL,
     correct BOOLEAN NOT NULL
 );

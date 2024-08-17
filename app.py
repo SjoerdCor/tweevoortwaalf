@@ -52,6 +52,9 @@ def new_game():
                 query, (datetime.datetime.now(), twaalfletterwoord.answer, mode)
             )
             gameid = cur.fetchone()[0]
+
+            session["gameid"] = gameid
+
             letterplacement_dct = tuple(
                 {
                     "game_id": gameid,
@@ -88,12 +91,23 @@ def guess():
     data = request.json
     guess_input = data.get("guess")
     answer = session["answer"].lower()
-    result = (
-        "Correct"
-        if guess_input.lower().strip().replace("ij", "\u0133") == answer
-        else "Incorrect"
-    )
+    correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
+    result = "Correct" if correct else "Incorrect"
     result += f"! The correct answer is {answer!r}"
+
+    database_url = os.getenv("DATABASE_URL")
+
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO woordrader.guesses (
+                        game_id, guess_time, guess, correct
+                        ) VALUES (
+                    %s, %s, %s, %s
+                    );"""
+            cur.execute(
+                query,
+                (session["gameid"], datetime.datetime.now(), guess_input, correct),
+            )
 
     session["game_active"] = False
     session["answer"] = None
