@@ -14,7 +14,7 @@ dependencies = [
     ]
 
 [project.optional-dependencies]
-analysis = ["scikit-learn~=1.5.1", "numpy~=2.0.0", "ipykernel~=6.29.5", "matplotlib~=3.9.1"]
+analysis = ["scikit-learn~=1.5.1", "numpy~=2.0.0", "ipykernel~=6.29.5", "matplotlib~=3.9.1", "sqlalchemy~=2.0.32"]
 dev = ["pre-commit~=3.7.1", "black~=24.4.2", "pylint~=3.2.5", "isort~=5.13.2"]
 
 [build-system]
