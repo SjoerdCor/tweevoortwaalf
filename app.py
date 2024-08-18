@@ -7,6 +7,7 @@ import psycopg
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
+from tweevoortwaalf.taartpuzzel import Taartpuzzel
 from tweevoortwaalf.woordrader import WoordRader
 
 load_dotenv()
@@ -24,9 +25,17 @@ def index():
 
 
 @app.route("/taartpuzzel")
-def paardensprong():
+def taartpuzzel():
     """Page to play taartpuzzel"""
-    return render_template("taartpuzzel.html")
+    letters = session.get("taartpuzzelletters", [""] * 9)
+    return render_template("taartpuzzel.html", letters=letters)
+
+
+@app.route("/new_taartpuzzel")
+def new_taartpuzzel():
+    """Create a new paardensprong puzzle"""
+    session["taartpuzzelletters"] = Taartpuzzel().create_puzzle()
+    return redirect(url_for("taartpuzzel"))
 
 
 @app.route("/new_game")
