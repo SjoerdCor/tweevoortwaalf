@@ -5,8 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2 voor 12 - Word Puzzle</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 <body>
+    <div class="new-game-section">
+        <form action="{{ url_for('new_game') }}" method="get">
+
+            <div class="player-name-section">
+                <label for="playername">Player Name:</label>
+                <input type="text" id="playername" maxlength="15" placeholder="Enter your name">
+                <div class="tooltip">
+                    <span class="info-icon">ℹ️</span>
+                    <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
+                </div>
+            </div>
+
+            <label>
+                <input type="radio" name="mode" value="normal"
+                    {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
+            </label>
+            <label>
+                <input type="radio" name="mode" value="easy"
+                    {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
+            </label>
+            <button type="submit">New Game</button>
+        </form>
+    </div>
+
     <div class="timer" id="timer">{{ '02:00' if active else '--:--' }}</div>
     <div class="grid" id="top-row">
         {% for i in range(12) %}
@@ -37,23 +62,23 @@
     </div>
     <input type="text" id="guess-input" placeholder="Guess the word" {{ 'disabled' if not active }}>
     <button id="submit-button" onclick="submitGuess()" {{ 'disabled' if not active }}>Submit</button>
-    <form action="{{ url_for('new_game') }}" method="get">
-        <label>
-            <input type="radio" name="mode" value="normal"
-                {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
-        </label>
-        <label>
-            <input type="radio" name="mode" value="easy"
-                {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
-        </label>
-        <button type="submit">New Game</button>
-    </form>
 
     <div id="result"></div>
     <script>
         let countdown;
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Load player name from local storage
+            const playerNameInput = document.getElementById('playername');
+            const savedName = localStorage.getItem('playerName');
+            if (savedName) {
+                playerNameInput.value = savedName;
+            }
+
+            playerNameInput.addEventListener('blur', () => {
+                localStorage.setItem('playerName', playerNameInput.value);
+            });
+
             const active = {{ 'true' if active else 'false' }};
             if (!active) {
                 document.getElementById('submit-button').disabled = true;
