@@ -23,6 +23,12 @@ def index():
     return render_template("index.html", state=game_state, active=game_active)
 
 
+@app.route("/paardensprong")
+def paardensprong():
+    """Page to play paardensprong"""
+    return render_template("paardensprong.html")
+
+
 @app.route("/new_game")
 def new_game():
     """Start a new game"""
