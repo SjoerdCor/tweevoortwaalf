@@ -1,13 +1,10 @@
 """ Generate Paardensprong puzzle and show it"""
 
-from io import BytesIO
 from typing import List
 
-import matplotlib.pyplot as plt
 import pandas as pd
-from PIL import Image, ImageDraw, ImageFont
 
-from .woordpuzzel import Woordpuzzel
+from .woordpuzzel import PuzzleImage, Woordpuzzel
 
 
 class Paardensprong(Woordpuzzel):
@@ -30,7 +27,11 @@ class Paardensprong(Woordpuzzel):
 
     def _unique_solution(self):
         """Rotations can not lead to an alternative solution"""
-        otherwords = set(pd.read_csv("Data/wordlist.csv")["Word"])
+        otherwords = set(
+            pd.read_csv(
+                "tweevoortwaalf/Data/suitable_8_letter_words.txt", header=None
+            ).squeeze()
+        )
         for i in range(1, len(self.answer)):
             if self.rotate(self.answer, i) in otherwords:
                 return False
@@ -60,38 +61,21 @@ class Paardensprong(Woordpuzzel):
 
 
 # pylint: disable=too-many-instance-attributes
-class PaardensprongImageGenerator:
+class PaardensprongImageGenerator(PuzzleImage):
     """Generates an image of a 3x3 letter puzzle with a central text."""
 
-    def __init__(self, puzzle, width=500, height=500):
+    def __init__(self, puzzle):
         """
         Initialize the image generator.
 
         puzzle must be a 3 x 3 grid of placed letters
-        :param width: Width of the image.
-        :param height: Height of the image.
         """
-        self.width = width
-        self.height = height
-        self.image = Image.new("RGB", (self.width, self.height), "red")
-        self.draw = ImageDraw.Draw(self.image)
+        super().__init__()
         self.grid_size = 3
         self.cell_size = self.width // self.grid_size
         self.circle_radius = self.cell_size // 3
         self.letters = puzzle
         self.font = self.load_font()
-
-    def load_font(self, font_size=80):
-        """
-        Load the font to be used in the image.
-
-        :param font_size: Size of the font.
-        :return: Loaded font.
-        """
-        try:
-            return ImageFont.truetype("arial.ttf", font_size)
-        except IOError:
-            return ImageFont.load_default()
 
     def draw_grid(self):
         """Draw the grid lines for the puzzle."""
@@ -150,13 +134,3 @@ class PaardensprongImageGenerator:
         """Generate the complete image."""
         self.draw_grid()
         self.draw_center_text()
-
-    def show_image(self):
-        """Display the generated image."""
-        buffer = BytesIO()
-        self.image.save(buffer, format="PNG")
-        buffer.seek(0)
-        plt.figure(figsize=(6, 6))
-        plt.imshow(Image.open(buffer))
-        plt.axis("off")  # Hide the axes
-        plt.show()

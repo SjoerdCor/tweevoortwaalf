@@ -1,14 +1,11 @@
 """Generate the Taartpuzzle image and show it"""
 
 import random
-from io import BytesIO
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from PIL import Image, ImageDraw, ImageFont
 
-from .woordpuzzel import Woordpuzzel
+from .woordpuzzel import PuzzleImage, Woordpuzzel
 
 
 class Taartpuzzel(Woordpuzzel):
@@ -24,7 +21,9 @@ class Taartpuzzel(Woordpuzzel):
 
     def _unique_solution(self):
         """Rotations can not lead to an alternative solution"""
-        otherwords = otherwords = pd.read_csv("Data/wordlist.csv")["Word"].dropna()
+        otherwords = pd.read_csv(
+            "tweevoortwaalf/Data/suitable_9_letter_words.txt", header=None
+        ).squeeze()
         pattern = (
             "^"
             + self.answer[: self.missing_letter_index]
@@ -72,33 +71,17 @@ class Taartpuzzel(Woordpuzzel):
 
 
 # pylint: disable=too-many-instance-attributes
-class TaartpuzzleImage:
+class TaartpuzzleImage(PuzzleImage):
     """Generate the Taartpuzzle image"""
 
-    width = 500
-    height = 500
-
     def __init__(self, letters):
+        super().__init__()
         self.letters = letters
-        self.image = Image.new("RGB", (self.width, self.height), "red")
-        self.draw = ImageDraw.Draw(self.image)
         self.circle_center = (self.width // 2, self.height // 2)
         self.circle_radius = self.width // 3
         self.inner_circle_radius = self.width // 10
         self.angles = np.linspace(0, 2 * np.pi, 9, endpoint=False)
         self.font = self.load_font()
-
-    def load_font(self, font_size=40):
-        """
-        Load the font to be used in the image.
-
-        :param font_size: Size of the font.
-        :return: Loaded font.
-        """
-        try:
-            return ImageFont.truetype("arial.ttf", font_size)
-        except IOError:
-            return ImageFont.load_default()
 
     def draw_inner_circle(self):
         """Draw the inner circle as an image"""
@@ -192,13 +175,3 @@ class TaartpuzzleImage:
 
         # The puzzle itself
         self.draw_letters()
-
-    def show_image(self):
-        """Display the generated image."""
-        buffer = BytesIO()
-        self.image.save(buffer, format="PNG")
-        buffer.seek(0)
-        plt.figure(figsize=(6, 6))
-        plt.imshow(Image.open(buffer))
-        plt.axis("off")
-        plt.show()
