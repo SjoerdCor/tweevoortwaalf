@@ -28,8 +28,6 @@
             height: auto;
         }
 
-        .yellow { fill: yellow; }
-        .white { fill: white; }
 
         button {
             padding: 10px 20px;
@@ -77,6 +75,9 @@
             font-size: 24px;
             font-family: Arial, sans-serif;
         }
+        .known { fill: white; }
+        .unknown { fill: yellow; }
+
     </style>
 </head>
 <body>
@@ -133,7 +134,8 @@
             for (let i = 0; i < letters.length; i++) {
                 const letterElement = document.getElementById(`letter${i + 1}`);
                 letterElement.textContent = letters[i];
-                letterElement.className = letters[i] === '?' ? 'yellow' : 'white';
+                letterElement.classList.remove("unknown", "known")
+                letterElement.classList.add(letters[i] == '?' ? 'unknown' : 'known');
             }
         }
 
