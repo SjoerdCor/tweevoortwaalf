@@ -26,6 +26,8 @@ def index():
 @app.route("/new_game")
 def new_game():
     """Start a new game"""
+    playername = request.args.get("playername")
+
     mode = request.args.get("mode", "normal")
     if mode == "easy":
         p_wrong = 0
@@ -44,12 +46,13 @@ def new_game():
     with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
         with conn.cursor() as cur:
             query = """INSERT INTO woordrader.games (
-                        start_time, answer, mode
+                        start_time, answer, mode, playername
                         ) VALUES (
-                    %s, %s, %s
+                    %s, %s, %s, %s
                     ) RETURNING game_id;"""
             cur.execute(
-                query, (datetime.datetime.now(), twaalfletterwoord.answer, mode)
+                query,
+                (datetime.datetime.now(), twaalfletterwoord.answer, mode, playername),
             )
             gameid = cur.fetchone()[0]
 
