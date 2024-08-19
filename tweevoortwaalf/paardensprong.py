@@ -4,7 +4,7 @@ from typing import List
 
 import pandas as pd
 
-from .woordpuzzel import PuzzleImage, Woordpuzzel
+from .woordpuzzel import Woordpuzzel
 
 
 class Paardensprong(Woordpuzzel):
@@ -55,82 +55,17 @@ class Paardensprong(Woordpuzzel):
 
     def show_puzzle(self, puzzle):
         """Show the puzzle as a nice image"""
+        try:
+            # pylint: disable=import-outside-toplevel
+            from .puzzleimages import PaardensprongImageGenerator
+
+            # pylint: enable=import-outside-toplevel
+        except ImportError as e:
+            raise RuntimeError(
+                "Can not import PaardensprongImageGenerator. Did you install "
+                "tweevoortwaalf[interactivegame] optional dependencies "
+                "to play this in a notebook?"
+            ) from e
         generator = PaardensprongImageGenerator(puzzle)
         generator.generate_image()
         generator.show_image()
-
-
-# pylint: disable=too-many-instance-attributes
-class PaardensprongImageGenerator(PuzzleImage):
-    """Generates an image of a 3x3 letter puzzle with a central text."""
-
-    def __init__(self, puzzle):
-        """
-        Initialize the image generator.
-
-        puzzle must be a 3 x 3 grid of placed letters
-        """
-        super().__init__()
-        self.grid_size = 3
-        self.cell_size = self.width // self.grid_size
-        self.circle_radius = self.cell_size // 3
-        self.letters = puzzle
-        self.font = self.load_font()
-
-    def draw_grid(self):
-        """Draw the grid lines for the puzzle."""
-        for row in range(self.grid_size):
-            for col in range(self.grid_size):
-                if (row, col) != (1, 1):  # Do not draw black letters on the center
-
-                    # draw white background
-                    x0 = (col + 0.1) * self.cell_size
-                    y0 = (row + 0.1) * self.cell_size
-                    x1 = x0 + self.cell_size * 0.8
-                    y1 = y0 + self.cell_size * 0.8
-                    self.draw.rectangle([x0, y0, x1, y1], fill="white", outline="white")
-
-                    # draw letter
-                    text = self.letters[row][col]
-                    bbox = self.draw.textbbox((0, 0), text, font=self.font)
-                    text_width = bbox[2] - bbox[0]
-                    text_height = bbox[3] - bbox[1]
-                    x = x0 + (self.cell_size * 0.8 - text_width) // 2
-                    y = y0 + (self.cell_size * 0.8 - text_height) // 2
-                    self.draw.text((x, y), text.upper(), fill="black", font=self.font)
-
-    def draw_center_text(self):
-        """Draw the central text '2V12'."""
-        center_x = self.width // 2
-        center_y = self.height // 2
-        self.draw.arc(
-            (
-                center_x - self.circle_radius,
-                center_y - self.circle_radius,
-                center_x + self.circle_radius,
-                center_y + self.circle_radius,
-            ),
-            start=300,
-            end=270,
-            fill="white",
-            width=5,
-        )
-
-        # Adjust font size for central text
-        central_text = "2V\n12"
-        font = self.load_font(40)
-        bbox = self.draw.textbbox((0, 0), central_text, font=font)
-        text_width = bbox[2] - bbox[0]
-        text_height = bbox[3] - bbox[1]
-        self.draw.text(
-            (center_x - text_width // 2, center_y - text_height // 2),
-            central_text,
-            fill="white",
-            font=font,
-            align="center",
-        )
-
-    def generate_image(self):
-        """Generate the complete image."""
-        self.draw_grid()
-        self.draw_center_text()
