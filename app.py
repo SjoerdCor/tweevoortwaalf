@@ -17,6 +17,47 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 
+def insert_data(table_name: str, data: dict, return_game_id=False) -> int | None:
+    """Write data to the tweevoortwaalf database
+
+    Parameters
+    ----------
+    table_name : str
+        The name of the table (incl. schema) to which the data should be written
+    data : dict
+        Dictionary with column name as key and values as values of the dictionary
+    return_game_id : bool
+        Whether the game_id should be returned
+
+    Returns
+    -------
+        game_id : Optional(int)
+            when `return_game_id` is True, returns the game_id as integer;
+            otherwise, returns None
+
+    """
+    database_url = os.getenv("DATABASE_URL")
+
+    columns = ", ".join(data.keys())
+    placeholders = ", ".join(["%s"] * len(data))
+    values = tuple(data.values())
+
+    query = f"INSERT INTO {table_name}.guesses ({columns}) VALUES ({placeholders})"
+    if return_game_id:
+        query += "RETURNING game_id"
+    query += ";"
+
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            cur.execute(query, values)
+            if return_game_id:
+                result = cur.fetchone()[0]
+                conn.commit()
+                return result
+            conn.commit()
+            return None
+
+
 @app.route("/")
 def index():
     """Home page"""
@@ -42,31 +83,16 @@ def new_taartpuzzel():
         tp.select_puzzle()
     session["taartpuzzelanswer"] = tp.answer
     session["taartpuzzelletters"] = tp.create_puzzle()
-    database_url = os.getenv("DATABASE_URL")
 
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO taartpuzzel.games (
-                        start_time, answer, startpoint, direction, missing_letter_index, playername
-                        ) VALUES (
-                    %s, %s, %s, %s, %s, %s
-                    ) RETURNING game_id;"""
-            cur.execute(
-                query,
-                (
-                    datetime.datetime.now(),
-                    tp.answer,
-                    tp.startpoint,
-                    tp.direction,
-                    tp.missing_letter_index,
-                    playername,
-                ),
-            )
-            gameid = cur.fetchone()[0]
-            session["taartpuzzelgameid"] = gameid
-
-            conn.commit()
-
+    data = {
+        "start_time": datetime.datetime.now(),
+        "answer": tp.answer,
+        "startpoint": tp.startpoint,
+        "missing_letter_index": tp.missing_letter_index,
+        "playername": playername,
+    }
+    gameid = insert_data("taartpuzzel.games", data, return_game_id=True)
+    session["taartpuzzelgameid"] = gameid
     return redirect(url_for("taartpuzzel"))
 
 
@@ -80,25 +106,13 @@ def guess_taartpuzzel():
     result = "Correct" if correct else "Incorrect"
     result += f"! The correct answer is {answer!r}"
 
-    database_url = os.getenv("DATABASE_URL")
-
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO taartpuzzel.guesses (
-                        game_id, guess_time, guess, correct
-                        ) VALUES (
-                    %s, %s, %s, %s
-                    );"""
-            cur.execute(
-                query,
-                (
-                    session["taartpuzzelgameid"],
-                    datetime.datetime.now(),
-                    guess_input,
-                    correct,
-                ),
-            )
-
+    data = {
+        "game_id": session["taartpuzzelgameid"],
+        "guess_time": datetime.datetime.now(),
+        "guess": guess_input,
+        "correct": correct,
+    }
+    insert_data("taartpuzzel.guesses", data)
     return render_template(
         "taartpuzzel.html", letters=session["taartpuzzelletters"], result=result
     )
@@ -122,29 +136,14 @@ def new_paardensprong():
     session["paardenspronganswer"] = ps.answer
     session["paardensprongletters"] = ps.create_puzzle()
 
-    database_url = os.getenv("DATABASE_URL")
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO paardensprong.games (
-                        start_time, answer, startpoint, direction, playername
-                        ) VALUES (
-                    %s, %s, %s, %s, %s
-                    ) RETURNING game_id;"""
-            cur.execute(
-                query,
-                (
-                    datetime.datetime.now(),
-                    ps.answer,
-                    ps.startpoint,
-                    ps.direction,
-                    playername,
-                ),
-            )
-            gameid = cur.fetchone()[0]
-            session["paardenspronggameid"] = gameid
-
-            conn.commit()
-
+    data = {
+        "start_time": datetime.datetime.now(),
+        "answer": ps.answer,
+        "startpoint": ps.startpoint,
+        "playername": playername,
+    }
+    gameid = insert_data("paardensprong.games", data, return_game_id=True)
+    session["paardenspronggameid"] = gameid
     return redirect(url_for("paardensprong"))
 
 
@@ -158,24 +157,13 @@ def guess_paardensprong():
     result = "Correct" if correct else "Incorrect"
     result += f"! The correct answer is {answer!r}"
 
-    database_url = os.getenv("DATABASE_URL")
-
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO paardensprong.guesses (
-                        game_id, guess_time, guess, correct
-                        ) VALUES (
-                    %s, %s, %s, %s
-                    );"""
-            cur.execute(
-                query,
-                (
-                    session["paardenspronggameid"],
-                    datetime.datetime.now(),
-                    guess_input,
-                    correct,
-                ),
-            )
+    data = {
+        "game_id": session["paardenspronggameid"],
+        "guess_time": datetime.datetime.now(),
+        "guess": data.get("guess"),
+        "correct": correct,
+    }
+    insert_data("paardensprong.guesses", data)
 
     return render_template(
         "paardensprong.html", letters=session["paardensprongletters"], result=result
@@ -245,18 +233,12 @@ def buy_letter():
     quizposition = data.get("quizposition")
     session["game_state"][quizposition]["bought"] = True
 
-    database_url = os.getenv("DATABASE_URL")
-
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO woordrader.boughtletters (
-                        game_id, letterposition, buytime
-                        ) VALUES (
-                    %s, %s, %s
-                    );"""
-            cur.execute(
-                query, (session["gameid"], quizposition, datetime.datetime.now())
-            )
+    data = {
+        "game_id": session["gameid"],
+        "letterposition": quizposition,
+        "buytime": datetime.datetime.now(),
+    }
+    insert_data("woordrader.boughtletters", data)
 
     return jsonify(session["game_state"])
 
@@ -271,24 +253,17 @@ def guess():
     result = "Correct" if correct else "Incorrect"
     result += f"! The correct answer is {answer!r}"
 
-    database_url = os.getenv("DATABASE_URL")
-
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO woordrader.guesses (
-                        game_id, guess_time, guess, correct
-                        ) VALUES (
-                    %s, %s, %s, %s
-                    );"""
-            cur.execute(
-                query,
-                (session["gameid"], datetime.datetime.now(), guess_input, correct),
-            )
+    data = {
+        "game_id": session["gameid"],
+        "guess_time": datetime.datetime.now(),
+        "guess": guess_input,
+        "correct": correct,
+    }
+    insert_data("woordrader.guesses", data)
 
     session["game_active"] = False
     session["answer"] = None
     session["game_state"] = {}
-
     return jsonify({"result": result})
 
 
