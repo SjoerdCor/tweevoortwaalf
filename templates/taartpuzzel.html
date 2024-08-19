@@ -4,85 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taartpuzzle Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        svg {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-        }
-
-
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        form {
-            margin-top: 20px;
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 80%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        input[type="submit"] {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #218838;
-        }
-
-        .letter {
-            text-anchor: middle;
-            font-size: 24px;
-            font-family: Arial, sans-serif;
-        }
-        .known { fill: white; }
-        .unknown { fill: yellow; }
-
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/taartpuzzel.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Taartpuzzle Game</h1>
+        <div class="new-game-section">
+            <form action="{{ url_for('new_taartpuzzel') }}" method="get">
+
+                <div class="player-name-section">
+                    <label for="playername">Player Name:</label>
+                    <input type="text" id="playername" name="playername" maxlength="15" placeholder="Enter your name">
+                    <div class="tooltip">
+                        <span class="info-icon">ℹ️</span>
+                        <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
+                    </div>
+                </div>
+                <button type="submit">New Game</button>
+            </form>
+        </div>
+
         <svg viewBox="0 0 500 500">
             <!-- Outer circle -->
             <circle cx="50%" cy="50%" r="50%" fill="red"/>
@@ -128,11 +70,6 @@
             <text x="38%" y="17.1%" id="letter9" class="letter {% if letters[8] == '?' %}unknown{% else %}known{% endif %}">{{ letters[8] }}</text>
         </svg>
 
-
-        <form action="{{ url_for('new_taartpuzzel') }}" method="get">
-            <button id="newGameBtn">New Game</button>
-        </form>
-
         <form action="{{ url_for('guess_taartpuzzel') }}" method="post" id="guessTaartpuzzel">
             <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="12">
             <input type="submit" value="Submit Guess">
@@ -143,5 +80,19 @@
             {% endif %}
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load player name from local storage
+            const playerNameInput = document.getElementById('playername');
+            const savedName = localStorage.getItem('playerName');
+            if (savedName) {
+                playerNameInput.value = savedName;
+            }
+
+            playerNameInput.addEventListener('blur', () => {
+                localStorage.setItem('playerName', playerNameInput.value);
+            });
+        });
+    </script>
 </body>
 </html>
