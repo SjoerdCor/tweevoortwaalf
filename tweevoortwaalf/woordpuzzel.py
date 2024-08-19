@@ -2,9 +2,9 @@
 
 import abc
 import csv
+import datetime
 import os
 import random
-import time
 
 import pandas as pd
 
@@ -17,6 +17,7 @@ class Woordpuzzel:
     """Base class for paardensprong and taartpuzzel"""
 
     def __init__(self, answer=None, direction=None, startpoint=None):
+        self.start_time = None
         if answer is None:
             self.select_puzzle()
         else:
@@ -24,7 +25,6 @@ class Woordpuzzel:
         # TODO: validate correctness of direction and startpoint
         self.direction = direction or random.choice([-1, 1])
         self.startpoint = startpoint or random.choice(range(self.n_letters))
-        self.starttime = None
         self.guesstime = None
         self.guess = None
         self.correct = None
@@ -53,6 +53,7 @@ class Woordpuzzel:
             header=None,
         ).squeeze()
         self.answer = wordlist.sample(1).squeeze()
+        self.start_time = datetime.datetime.now()
 
     def _write_to_file(self):
         output_path = os.path.join("Output", f"{self.__class__.__name__}.csv")
@@ -66,9 +67,18 @@ class Woordpuzzel:
             w.writerow(self.__dict__)
 
     @staticmethod
-    def clean_guess(guess):
+    def clean_string(guess):
         """Make strings comparable"""
-        return guess.lower().replace("ij", "\u0133")
+        return guess.lower().strip().replace("ij", "\u0133")
+
+    def check_guess(self, guess: str) -> None:
+        """Check whether the guess is correct
+
+        Cleans both guess and answer first
+        """
+        self.guess = guess
+        self.correct = self.clean_string(self.guess) == self.clean_string(self.answer)
+        self.guesstime = datetime.datetime.now()
 
     def play(self, write=True):
         """Play the game interactively"""
@@ -77,10 +87,9 @@ class Woordpuzzel:
 
         puzzle = self.create_puzzle()
         self.show_puzzle(puzzle)
-        self.starttime = time.time()
-        self.guess = input("")
-        self.guesstime = time.time() - self.starttime
-        self.correct = self.clean_guess(self.guess) == "".join(self.answer)
+        guess = input("")
+        self.check_guess(guess)
+
         if self.correct:
             print(f"You won! The answer was {self.answer!r}")
         else:

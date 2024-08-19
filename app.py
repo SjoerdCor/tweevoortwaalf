@@ -82,111 +82,88 @@ def index():
 @app.route("/taartpuzzel")
 def taartpuzzel():
     """Page to play taartpuzzel"""
-    letters = session.get("taartpuzzelletters", [""] * 9)
+    letters = session["taartpuzzel"].get("letters", [""] * 9)
     return render_template(
         "taartpuzzel.html", letters=letters, guess_correct=None, answer=None
-    )
-
-
-@app.route("/new_taartpuzzel")
-def new_taartpuzzel():
-    """Create a new taartpuzzel"""
-    playername = request.args.get("playername")
-
-    tp = Taartpuzzel()
-    while not tp.unique_solution():
-        tp.select_puzzle()
-    session["taartpuzzelanswer"] = tp.answer
-    session["taartpuzzelletters"] = tp.create_puzzle()
-
-    data = {
-        "start_time": datetime.datetime.now(),
-        "answer": tp.answer,
-        "startpoint": tp.startpoint,
-        "direction": tp.direction,
-        "missing_letter_index": tp.missing_letter_index,
-        "playername": playername,
-    }
-    gameid = insert_data("taartpuzzel.games", data, return_game_id=True)
-    session["taartpuzzelgameid"] = gameid
-    return redirect(url_for("taartpuzzel"))
-
-
-@app.route("/guess_taartpuzzel", methods=["POST"])
-def guess_taartpuzzel():
-    """Handle submitted guess for Taartpuzzel"""
-    guess_input = request.form.get("guess")
-    answer = session["taartpuzzelanswer"]
-    correct = is_guess_correct(guess_input, answer)
-
-    data = {
-        "game_id": session["taartpuzzelgameid"],
-        "guess_time": datetime.datetime.now(),
-        "guess": guess_input,
-        "correct": correct,
-    }
-    insert_data("taartpuzzel.guesses", data)
-    return render_template(
-        "taartpuzzel.html",
-        letters=session["taartpuzzelletters"],
-        guess_correct=correct,
-        answer=answer,
     )
 
 
 @app.route("/paardensprong")
 def paardensprong():
     """Page to play taartpuzzel"""
-    letters = session.get("paardensprongletters", [[""] * 3] * 3)
+    letters = session["paardensprong"].get("letters", [[""] * 3] * 3)
     return render_template(
         "paardensprong.html", letters=letters, guess_correct=None, answer=None
     )
 
 
-@app.route("/new_paardensprong")
-def new_paardensprong():
-    """Create a new paardensprong puzzle"""
+def new_puzzle(puzzlename, puzzleclass):
+    """Base function for creating a new puzzle"""
     playername = request.args.get("playername")
 
-    ps = Paardensprong()
-    while not ps.unique_solution():
-        ps.select_puzzle()
-    session["paardenspronganswer"] = ps.answer
-    session["paardensprongletters"] = ps.create_puzzle()
+    puzzle = puzzleclass()
+    while not puzzle.unique_solution():
+        puzzle.select_puzzle()
 
-    data = {
-        "start_time": datetime.datetime.now(),
-        "answer": ps.answer,
-        "startpoint": ps.startpoint,
-        "direction": ps.direction,
-        "playername": playername,
-    }
-    gameid = insert_data("paardensprong.games", data, return_game_id=True)
-    session["paardenspronggameid"] = gameid
-    return redirect(url_for("paardensprong"))
+    data = puzzle.__dict__.copy()
+    # Not known at creation yet, so don't write
+    to_eliminate = {"guesstime", "guess", "correct"}
+    for item in to_eliminate:
+        data.pop(item, None)
+    data["playername"] = playername
+
+    gameid = insert_data(f"{puzzlename}.games", data, return_game_id=True)
+
+    session[puzzlename] = {}
+    session[puzzlename]["answer"] = puzzle.answer
+    session[puzzlename]["letters"] = puzzle.create_puzzle()
+    session[puzzlename]["gameid"] = gameid
+
+    return redirect(url_for(puzzlename))
 
 
-@app.route("/guess_paardensprong", methods=["POST"])
-def guess_paardensprong():
-    """Handle submitted guess for Taartpuzzel"""
+@app.route("/new_taartpuzzel")
+def new_taartpuzzel():
+    """Create a new taartpuzzel"""
+    return new_puzzle("taartpuzzel", Taartpuzzel)
+
+
+@app.route("/new_paardensprong")
+def new_paardensprong():
+    """Create a new taartpuzzel"""
+    return new_puzzle("paardensprong", Paardensprong)
+
+
+def handle_guess(puzzlename):
+    """Base function for handling submitted guesses"""
     guess_input = request.form.get("guess")
-    answer = session["paardenspronganswer"]
+    answer = session[puzzlename]["answer"]
     correct = is_guess_correct(guess_input, answer)
-
     data = {
-        "game_id": session["paardenspronggameid"],
+        "game_id": session[puzzlename]["gameid"],
         "guess_time": datetime.datetime.now(),
         "guess": guess_input,
         "correct": correct,
     }
-    insert_data("paardensprong.guesses", data)
-
+    insert_data(f"{puzzlename}.guesses", data)
     return render_template(
-        "paardensprong.html",
-        letters=session["paardensprongletters"],
+        f"{puzzlename}.html",
+        letters=session[puzzlename]["letters"],
         guess_correct=correct,
         answer=answer,
     )
+
+
+@app.route("/guess_taartpuzzel", methods=["POST"])
+def guess_taartpuzzel():
+    """Handle submitted guess for Taartpuzzel"""
+    return handle_guess("taartpuzzel")
+
+
+@app.route("/guess_paardensprong", methods=["POST"])
+def guess_paardensprong():
+    """Handle submitted guess for Paardensprong"""
+    return handle_guess("paardensprong")
 
 
 @app.route("/new_game")
