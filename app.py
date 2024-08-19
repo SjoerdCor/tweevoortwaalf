@@ -28,14 +28,30 @@ def index():
 def taartpuzzel():
     """Page to play taartpuzzel"""
     letters = session.get("taartpuzzelletters", [""] * 9)
-    return render_template("taartpuzzel.html", letters=letters)
+    return render_template("taartpuzzel.html", letters=letters, result=None)
 
 
 @app.route("/new_taartpuzzel")
 def new_taartpuzzel():
     """Create a new paardensprong puzzle"""
-    session["taartpuzzelletters"] = Taartpuzzel().create_puzzle()
+    tp = Taartpuzzel()
+    session["taartpuzzelanswer"] = tp.answer
+    session["taartpuzzelletters"] = tp.create_puzzle()
     return redirect(url_for("taartpuzzel"))
+
+
+@app.route("/guess_taartpuzzel", methods=["POST"])
+def guess_taartpuzzel():
+    """Handle submitted guess for Taartpuzzel"""
+    data = request.form
+    guess_input = data.get("guess")
+    answer = session["taartpuzzelanswer"].lower()
+    correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
+    result = "Correct" if correct else "Incorrect"
+    result += f"! The correct answer is {answer!r}"
+    return render_template(
+        "taartpuzzel.html", letters=session["taartpuzzelletters"], result=result
+    )
 
 
 @app.route("/new_game")
