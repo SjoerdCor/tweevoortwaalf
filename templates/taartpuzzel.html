@@ -134,7 +134,7 @@
         </form>
 
         <form action="{{ url_for('guess_taartpuzzel') }}" method="post" id="guessTaartpuzzel">
-            <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" required>
+            <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="12">
             <input type="submit" value="Submit Guess">
         </form>
         <div id="result">
