@@ -37,6 +37,31 @@ def new_taartpuzzel():
     tp = Taartpuzzel()
     session["taartpuzzelanswer"] = tp.answer
     session["taartpuzzelletters"] = tp.create_puzzle()
+    database_url = os.getenv("DATABASE_URL")
+
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO taartpuzzel.games (
+                        start_time, answer, startpoint, direction, missing_letter_index, playername
+                        ) VALUES (
+                    %s, %s, %s, %s, %s, %s
+                    ) RETURNING game_id;"""
+            cur.execute(
+                query,
+                (
+                    datetime.datetime.now(),
+                    tp.answer,
+                    tp.startpoint,
+                    tp.direction,
+                    tp.missing_letter_index,
+                    None,
+                ),
+            )
+            gameid = cur.fetchone()[0]
+            session["taartpuzzelgameid"] = gameid
+
+            conn.commit()
+
     return redirect(url_for("taartpuzzel"))
 
 
