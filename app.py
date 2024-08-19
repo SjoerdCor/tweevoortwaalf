@@ -42,7 +42,7 @@ def insert_data(table_name: str, data: dict, return_game_id=False) -> int | None
     placeholders = ", ".join(["%s"] * len(data))
     values = tuple(data.values())
 
-    query = f"INSERT INTO {table_name}.guesses ({columns}) VALUES ({placeholders})"
+    query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
     if return_game_id:
         query += "RETURNING game_id"
     query += ";"
@@ -75,7 +75,7 @@ def taartpuzzel():
 
 @app.route("/new_taartpuzzel")
 def new_taartpuzzel():
-    """Create a new paardensprong puzzle"""
+    """Create a new taartpuzzel"""
     playername = request.args.get("playername")
 
     tp = Taartpuzzel()
@@ -88,6 +88,7 @@ def new_taartpuzzel():
         "start_time": datetime.datetime.now(),
         "answer": tp.answer,
         "startpoint": tp.startpoint,
+        "direction": tp.direction,
         "missing_letter_index": tp.missing_letter_index,
         "playername": playername,
     }
@@ -140,6 +141,7 @@ def new_paardensprong():
         "start_time": datetime.datetime.now(),
         "answer": ps.answer,
         "startpoint": ps.startpoint,
+        "direction": ps.direction,
         "playername": playername,
     }
     gameid = insert_data("paardensprong.games", data, return_game_id=True)
