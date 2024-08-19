@@ -63,7 +63,7 @@ input[type="submit"]:hover {
     background-color: #218838;
 }
 
-.letter {
+text {
     text-anchor: middle;
     font-size: 24px;
     font-family: Arial, sans-serif;
