@@ -105,6 +105,18 @@
             <text x="50%" y="52.5%" font-size="30" text-anchor="middle" fill="white" dy="15">12</text>
 
             <!-- Letters in the segments -->
+            <!-- Python code to calculate the position of each letter
+            import numpy as np
+
+            n_letters = 9
+            pct_of_seg = 0.7
+
+            for i in range(n_letters):
+                angle_deg = (i + 0.5) * 40
+
+                x = np.sin(np.deg2rad(angle_deg)) * pct_of_seg
+                y = np.cos(np.deg2rad(angle_deg)) * pct_of_seg
+                print(i, 0.5 + 0.5 * x, 0.5 - 0.5 * y) -->
             <text x="62%" y="17.1%" id="letter1" class="letter {% if letters[0] == '?' %}unknown{% else %}known{% endif %}">{{ letters[0] }}</text>
             <text x="80.3%" y="32.5%" id="letter2" class="letter {% if letters[1] == '?' %}unknown{% else %}known{% endif %}">{{ letters[1] }}</text>
             <text x="84.5%" y="56.1%" id="letter3" class="letter {% if letters[2] == '?' %}unknown{% else %}known{% endif %}">{{ letters[2] }}</text>
