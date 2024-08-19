@@ -58,6 +58,19 @@ def insert_data(table_name: str, data: dict, return_game_id=False) -> int | None
             return None
 
 
+def clean_str(strng: str) -> str:
+    """Make strings comparable"""
+    return strng.lower().strip().replace("ij", "\u0133")
+
+
+def is_guess_correct(guess: str, answer: str) -> bool:
+    """Check whether the guess is correct
+
+    Cleans both guess and answer first
+    """
+    return clean_str(guess) == clean_str(answer)
+
+
 @app.route("/")
 def index():
     """Home page"""
@@ -70,7 +83,9 @@ def index():
 def taartpuzzel():
     """Page to play taartpuzzel"""
     letters = session.get("taartpuzzelletters", [""] * 9)
-    return render_template("taartpuzzel.html", letters=letters, result=None)
+    return render_template(
+        "taartpuzzel.html", letters=letters, guess_correct=None, answer=None
+    )
 
 
 @app.route("/new_taartpuzzel")
@@ -100,12 +115,9 @@ def new_taartpuzzel():
 @app.route("/guess_taartpuzzel", methods=["POST"])
 def guess_taartpuzzel():
     """Handle submitted guess for Taartpuzzel"""
-    data = request.form
-    guess_input = data.get("guess")
-    answer = session["taartpuzzelanswer"].lower()
-    correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
-    result = "Correct" if correct else "Incorrect"
-    result += f"! The correct answer is {answer!r}"
+    guess_input = request.form.get("guess")
+    answer = session["taartpuzzelanswer"]
+    correct = is_guess_correct(guess_input, answer)
 
     data = {
         "game_id": session["taartpuzzelgameid"],
@@ -115,7 +127,10 @@ def guess_taartpuzzel():
     }
     insert_data("taartpuzzel.guesses", data)
     return render_template(
-        "taartpuzzel.html", letters=session["taartpuzzelletters"], result=result
+        "taartpuzzel.html",
+        letters=session["taartpuzzelletters"],
+        guess_correct=correct,
+        answer=answer,
     )
 
 
@@ -123,7 +138,9 @@ def guess_taartpuzzel():
 def paardensprong():
     """Page to play taartpuzzel"""
     letters = session.get("paardensprongletters", [[""] * 3] * 3)
-    return render_template("paardensprong.html", letters=letters, result=None)
+    return render_template(
+        "paardensprong.html", letters=letters, guess_correct=None, answer=None
+    )
 
 
 @app.route("/new_paardensprong")
@@ -152,23 +169,23 @@ def new_paardensprong():
 @app.route("/guess_paardensprong", methods=["POST"])
 def guess_paardensprong():
     """Handle submitted guess for Taartpuzzel"""
-    data = request.form
-    guess_input = data.get("guess")
-    answer = session["paardenspronganswer"].lower()
-    correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
-    result = "Correct" if correct else "Incorrect"
-    result += f"! The correct answer is {answer!r}"
+    guess_input = request.form.get("guess")
+    answer = session["paardenspronganswer"]
+    correct = is_guess_correct(guess_input, answer)
 
     data = {
         "game_id": session["paardenspronggameid"],
         "guess_time": datetime.datetime.now(),
-        "guess": data.get("guess"),
+        "guess": guess_input,
         "correct": correct,
     }
     insert_data("paardensprong.guesses", data)
 
     return render_template(
-        "paardensprong.html", letters=session["paardensprongletters"], result=result
+        "paardensprong.html",
+        letters=session["paardensprongletters"],
+        guess_correct=correct,
+        answer=answer,
     )
 
 
@@ -246,7 +263,7 @@ def buy_letter():
 
 
 @app.route("/guess", methods=["POST"])
-def guess():
+def guess_woordrader():
     """Handle a player guessing the end result"""
     data = request.json
     guess_input = data.get("guess")

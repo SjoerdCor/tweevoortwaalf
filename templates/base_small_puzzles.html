@@ -35,8 +35,13 @@
         </form>
 
         <div id="result">
-            {% if result %}
-                <p>{{ result }}</p>
+            {% if guess_correct is not none %}
+                {% if guess_correct %}
+                <p>Correct!</p>
+                {% else %}
+                <p>Incorrect!</p>
+                {% endif %}
+                <p>The answer is "{{ answer }}"</p>
             {% endif %}
         </div>
     </div>
