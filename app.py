@@ -74,6 +74,26 @@ def guess_taartpuzzel():
     correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
     result = "Correct" if correct else "Incorrect"
     result += f"! The correct answer is {answer!r}"
+
+    database_url = os.getenv("DATABASE_URL")
+
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO taartpuzzel.guesses (
+                        game_id, guess_time, guess, correct
+                        ) VALUES (
+                    %s, %s, %s, %s
+                    );"""
+            cur.execute(
+                query,
+                (
+                    session["taartpuzzelgameid"],
+                    datetime.datetime.now(),
+                    guess_input,
+                    correct,
+                ),
+            )
+
     return render_template(
         "taartpuzzel.html", letters=session["taartpuzzelletters"], result=result
     )
