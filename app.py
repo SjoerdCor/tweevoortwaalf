@@ -117,6 +117,8 @@ def new_paardensprong():
     playername = request.args.get("playername")
 
     ps = Paardensprong()
+    while not ps.unique_solution():
+        ps.select_puzzle()
     session["paardenspronganswer"] = ps.answer
     session["paardensprongletters"] = ps.create_puzzle()
 
