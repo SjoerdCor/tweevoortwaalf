@@ -34,6 +34,8 @@ def taartpuzzel():
 @app.route("/new_taartpuzzel")
 def new_taartpuzzel():
     """Create a new paardensprong puzzle"""
+    playername = request.args.get("playername")
+
     tp = Taartpuzzel()
     while not tp.unique_solution():
         tp.select_puzzle()
@@ -56,7 +58,7 @@ def new_taartpuzzel():
                     tp.startpoint,
                     tp.direction,
                     tp.missing_letter_index,
-                    None,
+                    playername,
                 ),
             )
             gameid = cur.fetchone()[0]
