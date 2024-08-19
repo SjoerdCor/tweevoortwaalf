@@ -7,6 +7,7 @@ import psycopg
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 
+from tweevoortwaalf.paardensprong import Paardensprong
 from tweevoortwaalf.taartpuzzel import Taartpuzzel
 from tweevoortwaalf.woordrader import WoordRader
 
@@ -100,6 +101,39 @@ def guess_taartpuzzel():
 
     return render_template(
         "taartpuzzel.html", letters=session["taartpuzzelletters"], result=result
+    )
+
+
+@app.route("/paardensprong")
+def paardensprong():
+    """Page to play taartpuzzel"""
+    letters = session.get("paardensprongletters", [[""] * 3] * 3)
+    return render_template("paardensprong.html", letters=letters, result=None)
+
+
+@app.route("/new_paardensprong")
+def new_paardensprong():
+    """Create a new paardensprong puzzle"""
+    playername = request.args.get("playername")  # pylint: disable=unused-variable
+
+    ps = Paardensprong()
+    session["paardenspronganswer"] = ps.answer
+    session["paardensprongletters"] = ps.create_puzzle()
+    return redirect(url_for("paardensprong"))
+
+
+@app.route("/guess_paardensprong", methods=["POST"])
+def guess_paardensprong():
+    """Handle submitted guess for Taartpuzzel"""
+    data = request.form
+    guess_input = data.get("guess")
+    answer = session["paardenspronganswer"].lower()
+    correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
+    result = "Correct" if correct else "Incorrect"
+    result += f"! The correct answer is {answer!r}"
+
+    return render_template(
+        "paardensprong.html", letters=session["paardensprongletters"], result=result
     )
 
 
