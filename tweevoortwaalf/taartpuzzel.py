@@ -24,11 +24,9 @@ class Taartpuzzel(Woordpuzzel):
             "tweevoortwaalf/Data/suitable_9_letter_words.txt", header=None
         ).squeeze()
         pattern = (
-            "^"
-            + self.answer[: self.missing_letter_index]
+            self.answer[: self.missing_letter_index]
             + "."
             + self.answer[self.missing_letter_index + 1 :]
-            + "$"
         )
 
         def rotate(strg, n):
