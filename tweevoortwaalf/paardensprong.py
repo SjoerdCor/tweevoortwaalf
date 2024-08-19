@@ -25,7 +25,7 @@ class Paardensprong(Woordpuzzel):
         """
         return wrd[n:] + wrd[:n]
 
-    def _unique_solution(self):
+    def unique_solution(self):
         """Rotations can not lead to an alternative solution"""
         otherwords = set(
             pd.read_csv(

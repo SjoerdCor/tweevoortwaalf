@@ -35,7 +35,7 @@ class Woordpuzzel:
         """The number of letters in the puzzle"""
 
     @abc.abstractmethod
-    def _unique_solution(self):
+    def unique_solution(self):
         """Determines whether puzzle has a unique solutions. Must be implemented by subclasses"""
 
     @abc.abstractmethod
@@ -72,7 +72,7 @@ class Woordpuzzel:
 
     def play(self, write=True):
         """Play the game interactively"""
-        if not self._unique_solution():
+        if not self.unique_solution():
             raise NonUniqueQuizException(f"More than one solution for {self.answer!r}")
 
         puzzle = self.create_puzzle()

@@ -18,7 +18,7 @@ class Taartpuzzel(Woordpuzzel):
             range(self.n_letters)
         )
 
-    def _unique_solution(self):
+    def unique_solution(self):
         """Rotations can not lead to an alternative solution"""
         otherwords = pd.read_csv(
             "tweevoortwaalf/Data/suitable_9_letter_words.txt", header=None

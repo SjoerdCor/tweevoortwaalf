@@ -35,6 +35,8 @@ def taartpuzzel():
 def new_taartpuzzel():
     """Create a new paardensprong puzzle"""
     tp = Taartpuzzel()
+    while not tp.unique_solution():
+        tp.select_puzzle()
     session["taartpuzzelanswer"] = tp.answer
     session["taartpuzzelletters"] = tp.create_puzzle()
     database_url = os.getenv("DATABASE_URL")
