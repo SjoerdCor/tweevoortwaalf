@@ -114,11 +114,35 @@ def paardensprong():
 @app.route("/new_paardensprong")
 def new_paardensprong():
     """Create a new paardensprong puzzle"""
-    playername = request.args.get("playername")  # pylint: disable=unused-variable
+    playername = request.args.get("playername")
 
     ps = Paardensprong()
     session["paardenspronganswer"] = ps.answer
     session["paardensprongletters"] = ps.create_puzzle()
+
+    database_url = os.getenv("DATABASE_URL")
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO paardensprong.games (
+                        start_time, answer, startpoint, direction, playername
+                        ) VALUES (
+                    %s, %s, %s, %s, %s
+                    ) RETURNING game_id;"""
+            cur.execute(
+                query,
+                (
+                    datetime.datetime.now(),
+                    ps.answer,
+                    ps.startpoint,
+                    ps.direction,
+                    playername,
+                ),
+            )
+            gameid = cur.fetchone()[0]
+            session["paardenspronggameid"] = gameid
+
+            conn.commit()
+
     return redirect(url_for("paardensprong"))
 
 
@@ -131,6 +155,25 @@ def guess_paardensprong():
     correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
     result = "Correct" if correct else "Incorrect"
     result += f"! The correct answer is {answer!r}"
+
+    database_url = os.getenv("DATABASE_URL")
+
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            query = """INSERT INTO paardensprong.guesses (
+                        game_id, guess_time, guess, correct
+                        ) VALUES (
+                    %s, %s, %s, %s
+                    );"""
+            cur.execute(
+                query,
+                (
+                    session["paardenspronggameid"],
+                    datetime.datetime.now(),
+                    guess_input,
+                    correct,
+                ),
+            )
 
     return render_template(
         "paardensprong.html", letters=session["paardensprongletters"], result=result
