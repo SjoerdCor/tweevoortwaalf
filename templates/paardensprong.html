@@ -1,92 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taartpuzzle Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/taartpuzzel.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>Paardensprong</h1>
-        <div class="new-game-section">
-            <form action="{{ url_for('new_paardensprong') }}" method="get">
+{% extends 'base_small_puzzles.html' %}
 
-                <div class="player-name-section">
-                    <label for="playername">Player Name:</label>
-                    <input type="text" id="playername" name="playername" maxlength="15" placeholder="Enter your name">
-                    <div class="tooltip">
-                        <span class="info-icon">ℹ️</span>
-                        <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
-                    </div>
-                </div>
-                <button type="submit">New Game</button>
-            </form>
-        </div>
+{% set quizname = 'Paardensprong' %}
+{% set new_game_url = url_for('new_paardensprong') %}
+{% set submit_guess_url = url_for('guess_paardensprong') %}
 
-        <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <!-- Draw the background -->
-            <rect width="100%" height="100%" fill="black"/>
 
-            <!-- Draw grid cells and letters using relative positioning -->
-            <!-- Row 1 -->
-            <rect x="3.33%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
-            <text x="16.66%" y="20%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[0][0] }}</text>
+{% block puzzleimage %}
+<!-- Draw the background -->
+<rect width="100%" height="100%" fill="black"/>
 
-            <rect x="36.66%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
-            <text x="50%" y="20%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[0][1] }}</text>
+<!-- Draw grid cells and letters using relative positioning -->
+<!-- Row 1 -->
+<rect x="3.33%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
+<text x="16.66%" y="20%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[0][0] }}</text>
 
-            <rect x="70%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
-            <text x="83.33%" y="20%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[0][2] }}</text>
+<rect x="36.66%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
+<text x="50%" y="20%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[0][1] }}</text>
 
-            <!-- Row 2 -->
-            <rect x="3.33%" y="36.66%" width="26.66%" height="26.66%" fill="white" />
-            <text x="16.66%" y="53.33%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[1][0] }}</text>
+<rect x="70%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
+<text x="83.33%" y="20%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[0][2] }}</text>
 
-            <!-- Central Circle and Arc -->
-            <circle cx="50%" cy="50%" r="15%" stroke="white" stroke-width="1.5%" fill="none" />
-            <!-- Central Text -->
-            <text x="50%" y="46%" font-family="Arial" font-size="7" fill="white" text-anchor="middle">2V</text>
-            <text x="50%" y="54%" font-family="Arial" font-size="7" fill="white" text-anchor="middle">12</text>
+<!-- Row 2 -->
+<rect x="3.33%" y="36.66%" width="26.66%" height="26.66%" fill="white" />
+<text x="16.66%" y="53.33%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[1][0] }}</text>
 
-            <rect x="70%" y="36.66%" width="26.66%" height="26.66%" fill="white" />
-            <text x="83.33%" y="53.33%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[1][2] }}</text>
+<!-- Central Circle and Arc -->
+<circle cx="50%" cy="50%" r="15%" stroke="white" stroke-width="1.5%" fill="none" />
+<!-- Central Text -->
+<text x="50%" y="46%" font-family="Arial" font-size="7" fill="white" text-anchor="middle">2V</text>
+<text x="50%" y="54%" font-family="Arial" font-size="7" fill="white" text-anchor="middle">12</text>
 
-            <!-- Row 3 -->
-            <rect x="3.33%" y="70%" width="26.66%" height="26.66%" fill="white" />
-            <text x="16.66%" y="86.66%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[2][0] }}</text>
+<rect x="70%" y="36.66%" width="26.66%" height="26.66%" fill="white" />
+<text x="83.33%" y="53.33%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[1][2] }}</text>
 
-            <rect x="36.66%" y="70%" width="26.66%" height="26.66%" fill="white" />
-            <text x="50%" y="86.66%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[2][1] }}</text>
+<!-- Row 3 -->
+<rect x="3.33%" y="70%" width="26.66%" height="26.66%" fill="white" />
+<text x="16.66%" y="86.66%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[2][0] }}</text>
 
-            <rect x="70%" y="70%" width="26.66%" height="26.66%" fill="white" />
-            <text x="83.33%" y="86.66%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[2][2] }}</text>
-        </svg>
+<rect x="36.66%" y="70%" width="26.66%" height="26.66%" fill="white" />
+<text x="50%" y="86.66%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[2][1] }}</text>
 
-        <form action="{{ url_for('guess_paardensprong') }}" method="post" id="guessPaardensprong">
-            <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="12">
-            <input type="submit" value="Submit Guess">
-        </form>
-        <div id="result">
-            {% if result %}
-                <p>{{ result }}</p>
-            {% endif %}
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load player name from local storage
-            const playerNameInput = document.getElementById('playername');
-            const savedName = localStorage.getItem('playerName');
-            if (savedName) {
-                playerNameInput.value = savedName;
-            }
-
-            playerNameInput.addEventListener('blur', () => {
-                localStorage.setItem('playerName', playerNameInput.value);
-            });
-        });
-    </script>
-</body>
-</html>
+<rect x="70%" y="70%" width="26.66%" height="26.66%" fill="white" />
+<text x="83.33%" y="86.66%" font-family="Arial" font-size="12" fill="black" text-anchor="middle">{{ letters[2][2] }}</text>
+{% endblock %}
