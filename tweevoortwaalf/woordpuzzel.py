@@ -5,11 +5,8 @@ import csv
 import os
 import random
 import time
-from io import BytesIO
 
-import matplotlib.pyplot as plt
 import pandas as pd
-from PIL import Image, ImageDraw, ImageFont
 
 
 class NonUniqueQuizException(Exception):
@@ -90,36 +87,3 @@ class Woordpuzzel:
             print(f"You lost! The answer is {self.answer!r}")
         if write:
             self._write_to_file()
-
-
-class PuzzleImage:
-    """Base class for puzzle images"""
-
-    width = 500
-    height = 500
-
-    def __init__(self):
-        self.image = Image.new("RGB", (self.width, self.height), "red")
-        self.draw = ImageDraw.Draw(self.image)
-
-    def load_font(self, font_size=40):
-        """
-        Load the font to be used in the image.
-
-        :param font_size: Size of the font.
-        :return: Loaded font.
-        """
-        try:
-            return ImageFont.truetype("arial.ttf", font_size)
-        except IOError:
-            return ImageFont.load_default()
-
-    def show_image(self):
-        """Display the generated image."""
-        buffer = BytesIO()
-        self.image.save(buffer, format="PNG")
-        buffer.seek(0)
-        plt.figure(figsize=(6, 6))
-        plt.imshow(Image.open(buffer))
-        plt.axis("off")  # Hide the axes
-        plt.show()
