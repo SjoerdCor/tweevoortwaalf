@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.puzzleimage {
+    background-color: red;
+}
+
+svg {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+}
+
+form {
+    margin-top: 20px;
+}
+
+rect {
+    fill: white;
+}
+
+circle, line {
+    stroke: white;
+    stroke-width: 1.5%;
+    fill: none;
+}
+
+text {
+    text-anchor: middle;
+    font-size: 34px;
+    font-family: Arial, sans-serif;
+}
+
+.central {
+    font-size: 30px;
+    fill: white;
+}
+
+.known { fill: white; }
+.unknown { fill: yellow; }

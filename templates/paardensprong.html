@@ -6,40 +6,37 @@
 
 
 {% block puzzleimage %}
-<!-- Draw the background -->
-<rect width="100%" height="100%" fill="black"/>
-
 <!-- Draw grid cells and letters using relative positioning -->
 <!-- Row 1 -->
-<rect x="3.33%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
+<rect x="3.33%" y="3.33%" width="26.66%" height="26.66%" />
 <text x="16.66%" y="20%">{{ letters[0][0] }}</text>
 
-<rect x="36.66%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
+<rect x="36.66%" y="3.33%" width="26.66%" height="26.66%" />
 <text x="50%" y="20%">{{ letters[0][1] }}</text>
 
-<rect x="70%" y="3.33%" width="26.66%" height="26.66%" fill="white" />
+<rect x="70%" y="3.33%" width="26.66%" height="26.66%" />
 <text x="83.33%" y="20%">{{ letters[0][2] }}</text>
 
 <!-- Row 2 -->
-<rect x="3.33%" y="36.66%" width="26.66%" height="26.66%" fill="white" />
+<rect x="3.33%" y="36.66%" width="26.66%" height="26.66%" />
 <text x="16.66%" y="53.33%">{{ letters[1][0] }}</text>
 
 <!-- Central Circle and Arc -->
-<circle cx="50%" cy="50%" r="15%" stroke="white" stroke-width="1.5%" fill="none" />
+<circle cx="50%" cy="50%" r="15%"/>
 <!-- Central Text -->
-<text x="50%" y="46%">2V</text>
-<text x="50%" y="54%">12</text>
+<text x="50%" y="46%" class="central">2V</text>
+<text x="50%" y="54%" class="central">12</text>
 
-<rect x="70%" y="36.66%" width="26.66%" height="26.66%" fill="white" />
+<rect x="70%" y="36.66%" width="26.66%" height="26.66%" />
 <text x="83.33%" y="53.33%">{{ letters[1][2] }}</text>
 
 <!-- Row 3 -->
-<rect x="3.33%" y="70%" width="26.66%" height="26.66%" fill="white" />
+<rect x="3.33%" y="70%" width="26.66%" height="26.66%" />
 <text x="16.66%" y="86.66%">{{ letters[2][0] }}</text>
 
-<rect x="36.66%" y="70%" width="26.66%" height="26.66%" fill="white" />
+<rect x="36.66%" y="70%" width="26.66%" height="26.66%" />
 <text x="50%" y="86.66%">{{ letters[2][1] }}</text>
 
-<rect x="70%" y="70%" width="26.66%" height="26.66%" fill="white" />
+<rect x="70%" y="70%" width="26.66%" height="26.66%" />
 <text x="83.33%" y="86.66%">{{ letters[2][2] }}</text>
 {% endblock %}
