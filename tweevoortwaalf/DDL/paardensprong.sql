@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS  paardensprong.games (
 
 CREATE TABLE IF NOT EXISTS paardensprong.guesses (
     guess_id SERIAL PRIMARY KEY,
-    game_id INT REFERENCES taartpuzzel.games(game_id) ON DELETE CASCADE,
+    game_id INT REFERENCES paardensprong.games(game_id) ON DELETE CASCADE,
     guess_time TIMESTAMP NOT NULL,
     guess VARCHAR(12) NOT NULL,
     correct BOOLEAN NOT NULL
