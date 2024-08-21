@@ -116,7 +116,7 @@
                     console.log(puzzleSpecific)
                     puzzleSpecific.innerHTML = data.html
 
-                    showTopRowLetters()
+                    showTopRowLettersAsCapitals()
                     makeTopRowClickable()
                 })
 
@@ -175,18 +175,13 @@
                 resultDiv.innerHTML = resultHtml;
             }
 
-            function showTopRowLetters() {
+            function showTopRowLettersAsCapitals() {
 
-                console.log("add top row letters")
-                const gamestate = {{ state|tojson|safe }};
-                console.log(gamestate)
-
-                for (const [pos, cell] of Object.entries(gamestate)) {
-                    const cellUpperRow = document.getElementById(`upperrow-${pos}`);
-                    const shownLetter = cell.shown_letter;
-                    const letter = shownLetter.toLowerCase() === 'i' ? 'i' : shownLetter.toUpperCase();
-                    cellUpperRow.textContent = letter;
-                }
+                const topRowCells = document.querySelectorAll('#top-row .cell');
+                topRowCells.forEach(cell => {
+                    const letter = cell.textContent.toLowerCase() === 'i' ? 'i' : cell.textContent.toUpperCase();
+                    cell.textContent = letter
+                });
             }
 
 
