@@ -138,8 +138,10 @@ def new_puzzle(puzzlename, puzzleclass, **kwargs):
     session[puzzlename]["gameid"] = gameid
     session[puzzlename]["active"] = True
 
-    return render_template(puzzlename)
-    # return redirect(url_for(puzzlename))
+    html = render_template(
+        f"{puzzlename}specific.html", state=session[puzzlename]["state"]
+    )
+    return jsonify({"html": html})
 
 
 @app.route("/new_woordrader")
