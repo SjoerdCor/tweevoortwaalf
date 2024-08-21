@@ -88,7 +88,7 @@ def woordrader():
 @app.route("/taartpuzzel")
 def taartpuzzel():
     """Page to play taartpuzzel"""
-    state = session["taartpuzzel"].get("state", [""] * 9)
+    state = session.get("taartpuzzel", {}).get("state", [""] * 9)
     return render_template(
         "taartpuzzel.html", state=state, guess_correct=None, answer=None
     )
@@ -97,7 +97,7 @@ def taartpuzzel():
 @app.route("/paardensprong")
 def paardensprong():
     """Page to play taartpuzzel"""
-    state = session["paardensprong"].get("state", [[""] * 3] * 3)
+    state = session.get("paardensprong", {}).get("state", [[""] * 3] * 3)
     return render_template(
         "paardensprong.html", state=state, guess_correct=None, answer=None
     )
