@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS woordrader.guesses (
     game_id INT REFERENCES woordrader.games(game_id) ON DELETE CASCADE,
     guess_time TIMESTAMP NOT NULL,
     guess VARCHAR(15) NOT NULL,
-    correct BOOLEAN NOT NULL
+    correct BOOLEAN NOT NULL,
+    UNIQUE(game_id)
 );
 
 CREATE TABLE IF NOT EXISTS woordrader.boughtletters (

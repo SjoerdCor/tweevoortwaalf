@@ -14,5 +14,6 @@ CREATE TABLE IF NOT EXISTS paardensprong.guesses (
     game_id INT REFERENCES paardensprong.games(game_id) ON DELETE CASCADE,
     guess_time TIMESTAMP NOT NULL,
     guess VARCHAR(12) NOT NULL,
-    correct BOOLEAN NOT NULL
+    correct BOOLEAN NOT NULL,
+    UNIQUE (game_id)
 );
