@@ -1,3 +1,4 @@
+{% set new_game_url = url_for('new_woordrader') %}
 {% set submit_guess_url = url_for('guess_woordrader') %}
 
 <!DOCTYPE html>
@@ -6,12 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2 voor 12 - Word Puzzle</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.cs
+    s') }}">
 
 </head>
 <body>
     <div class="new-game-section">
-        <form action="{{ url_for('new_game') }}" method="get">
+        <form action="{{ new_game_url }}" method="get">
 
             <div class="player-name-section">
                 <label for="playername">Player Name:</label>

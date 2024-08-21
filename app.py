@@ -74,12 +74,12 @@ def is_guess_correct(guess: str, answer: str) -> bool:
 @app.route("/woordrader")
 def woordrader():
     """Home page"""
-    game_active = session.get("game_active", False)
-    game_state = session.get("game_state", {})
+    active = session.get("woordrader", {}).get("active", False)
+    state = session.get("woordrader", {}).get("state", {})
     return render_template(
         "woordrader.html",
-        letters=game_state,
-        active=game_active,
+        state=state,
+        active=active,
         guess_correct=None,
         answer=None,
     )
@@ -88,26 +88,26 @@ def woordrader():
 @app.route("/taartpuzzel")
 def taartpuzzel():
     """Page to play taartpuzzel"""
-    letters = session["taartpuzzel"].get("letters", [""] * 9)
+    state = session["taartpuzzel"].get("state", [""] * 9)
     return render_template(
-        "taartpuzzel.html", letters=letters, guess_correct=None, answer=None
+        "taartpuzzel.html", state=state, guess_correct=None, answer=None
     )
 
 
 @app.route("/paardensprong")
 def paardensprong():
     """Page to play taartpuzzel"""
-    letters = session["paardensprong"].get("letters", [[""] * 3] * 3)
+    state = session["paardensprong"].get("state", [[""] * 3] * 3)
     return render_template(
-        "paardensprong.html", letters=letters, guess_correct=None, answer=None
+        "paardensprong.html", state=state, guess_correct=None, answer=None
     )
 
 
-def new_puzzle(puzzlename, puzzleclass):
+def new_puzzle(puzzlename, puzzleclass, **kwargs):
     """Base function for creating a new puzzle"""
     playername = request.args.get("playername")
 
-    puzzle = puzzleclass()
+    puzzle = puzzleclass(**kwargs)
     while not puzzle.unique_solution():
         puzzle.select_puzzle()
 
@@ -116,16 +116,65 @@ def new_puzzle(puzzlename, puzzleclass):
     to_eliminate = {"guesstime", "guess", "correct"}
     for item in to_eliminate:
         data.pop(item, None)
+
+    # Since the state for woordrader is more complex, this is written to a
+    # different table, for normalized tables
+    if puzzlename == "woordrader":
+        data.pop("state", None)
+
     data["playername"] = playername
 
     gameid = insert_data(f"{puzzlename}.games", data, return_game_id=True)
 
     session[puzzlename] = {}
     session[puzzlename]["answer"] = puzzle.answer
-    session[puzzlename]["letters"] = puzzle.create_puzzle()
+    session[puzzlename]["state"] = puzzle.create_puzzle()
     session[puzzlename]["gameid"] = gameid
+    session[puzzlename]["active"] = True
 
     return redirect(url_for(puzzlename))
+
+
+@app.route("/new_woordrader")
+def new_woordrader():
+    """Create a new Woordrader puzzle"""
+    mode = request.form.get("mode", "normal")
+    if mode == "easy":
+        p_wrong = 0
+        p_unknown = 0
+    elif mode == "normal":
+        p_wrong = 0.05
+        p_unknown = 0.05
+    else:
+        raise ValueError(f"Unknown mode {mode!r}")
+
+    response = new_puzzle(
+        "woordrader", WoordRader, p_wrong=p_wrong, p_unknown=p_unknown
+    )
+
+    database_url = os.getenv("DATABASE_URL")
+    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
+        with conn.cursor() as cur:
+            letterplacements = tuple(
+                {
+                    "game_id": session["woordrader"]["gameid"],
+                    "position": k + 1,
+                    "shown_letter": v["shown_letter"],
+                    "correct": v["correct"],
+                }
+                for k, v in session["woordrader"]["state"].items()
+            )
+            cur.executemany(
+                """INSERT INTO woordrader.shownletters (
+                    game_id, position, shown_letter, correct
+                ) VALUES (
+                    %(game_id)s, %(position)s, %(shown_letter)s, %(correct)s
+                )""",
+                letterplacements,
+            )
+            conn.commit()
+
+    return response
 
 
 @app.route("/new_taartpuzzel")
@@ -154,7 +203,7 @@ def handle_guess(puzzlename):
     insert_data(f"{puzzlename}.guesses", data)
     return render_template(
         f"{puzzlename}.html",
-        letters=session[puzzlename]["letters"],
+        state=session[puzzlename]["state"],
         guess_correct=correct,
         answer=answer,
     )
@@ -176,62 +225,6 @@ def guess_taartpuzzel():
 def guess_paardensprong():
     """Handle submitted guess for Paardensprong"""
     return handle_guess("paardensprong")
-
-
-@app.route("/new_game")
-def new_game():
-    """Start a new game"""
-    playername = request.args.get("playername")
-
-    mode = request.args.get("mode", "normal")
-    if mode == "easy":
-        p_wrong = 0
-    elif mode == "normal":
-        p_wrong = 0.05
-    else:
-        raise ValueError(f"Unknown mode {mode!r}")
-    twaalfletterwoord = WoordRader(p_unknown=p_wrong, p_wrong=p_wrong)
-    twaalfletterwoord.initialize_game()
-    session["game_state"] = twaalfletterwoord.state
-    session["answer"] = twaalfletterwoord.answer
-    session["game_active"] = True
-    session["mode"] = mode
-
-    database_url = os.getenv("DATABASE_URL")
-    with psycopg.connect(database_url) as conn:  # pylint: disable=not-context-manager
-        with conn.cursor() as cur:
-            query = """INSERT INTO woordrader.games (
-                        start_time, answer, mode, playername
-                        ) VALUES (
-                    %s, %s, %s, %s
-                    ) RETURNING game_id;"""
-            cur.execute(
-                query,
-                (datetime.datetime.now(), twaalfletterwoord.answer, mode, playername),
-            )
-            gameid = cur.fetchone()[0]
-
-            session["gameid"] = gameid
-
-            letterplacement_dct = tuple(
-                {
-                    "game_id": gameid,
-                    "position": k + 1,
-                    "shown_letter": v["shown_letter"],
-                    "correct": v["correct"],
-                }
-                for k, v in twaalfletterwoord.state.items()
-            )
-            cur.executemany(
-                """INSERT INTO woordrader.shownletters (
-                    game_id, position, shown_letter, correct
-                ) VALUES (
-                    %(game_id)s, %(position)s, %(shown_letter)s, %(correct)s
-                )""",
-                letterplacement_dct,
-            )
-            conn.commit()
-    return redirect(url_for("woordrader"))
 
 
 @app.route("/buy_letter", methods=["POST"])
