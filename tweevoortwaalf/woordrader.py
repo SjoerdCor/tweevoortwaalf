@@ -56,7 +56,7 @@ class WoordRader:
                     "correct": True,
                     "true_letter": "",
                 }
-                for i in range(1, 13)
+                for i in range(12)
             }
         else:
             self._generate_starting_position()

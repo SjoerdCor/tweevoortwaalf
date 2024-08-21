@@ -81,7 +81,7 @@ def home():
 def woordrader():
     """Home page"""
     active = session.get("woordrader", {}).get("active", False)
-    state = session.get("woordrader", {}).get("state", {})
+    state = session.get("woordrader", {}).get("state", WoordRader().state)
     active = False
     return render_template(
         "woordrader.html",
@@ -183,7 +183,7 @@ def new_woordrader():
                 letterplacements,
             )
             conn.commit()
-
+    print(session["woordrader"]["state"])
     return response
 
 
