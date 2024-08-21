@@ -4,8 +4,9 @@ CREATE TABLE IF NOT EXISTS  woordrader.games (
     game_id SERIAL PRIMARY KEY,
     start_time TIMESTAMP NOT NULL,
     answer CHAR(12) NOT NULL,
-    mode VARCHAR(50) NOT NULL,
-    playername VARCHAR(15)
+    playername VARCHAR(15),
+    p_unknown NUMERIC(3, 2) NOT NULL,
+    p_wrong NUMERIC(3, 2) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS woordrader.shownletters (

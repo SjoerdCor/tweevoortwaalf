@@ -41,6 +41,7 @@ class Woordpuzzel:
     @abc.abstractmethod
     def create_puzzle(self):
         """Creates the puzzle. Must be implemented by subclasses"""
+        # TODO: set guess and guesstime to None
 
     @abc.abstractmethod
     def show_puzzle(self, puzzle):
@@ -53,7 +54,7 @@ class Woordpuzzel:
             header=None,
         ).squeeze()
         self.answer = wordlist.sample(1).squeeze()
-        self.start_time = datetime.datetime.now()
+        self.start_time = datetime.datetime.now()  # TODO: move to create_puzzle
 
     def _write_to_file(self):
         output_path = os.path.join("Output", f"{self.__class__.__name__}.csv")

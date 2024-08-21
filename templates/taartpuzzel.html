@@ -36,13 +36,13 @@ for i in range(n_letters):
     x = np.sin(np.deg2rad(angle_deg)) * pct_of_seg
     y = np.cos(np.deg2rad(angle_deg)) * pct_of_seg
     print(i, 0.5 + 0.5 * x, 0.5 - 0.5 * y) -->
-<text x="62%" y="17.1%" id="letter1" class="{% if letters[0] == '?' %}unknown{% else %}known{% endif %}">{{ letters[0] }}</text>
-<text x="80.3%" y="32.5%" id="letter2" class="{% if letters[1] == '?' %}unknown{% else %}known{% endif %}">{{ letters[1] }}</text>
-<text x="84.5%" y="56.1%" id="letter3" class="{% if letters[2] == '?' %}unknown{% else %}known{% endif %}">{{ letters[2] }}</text>
-<text x="72.5%" y="76.8%" id="letter4" class="{% if letters[3] == '?' %}unknown{% else %}known{% endif %}">{{ letters[3] }}</text>
-<text x="50%" y="85%" id="letter5" class="{% if letters[4] == '?' %}unknown{% else %}known{% endif %}">{{ letters[4] }}</text>
-<text x="27.5%" y="76.8%" id="letter6" class="{% if letters[5] == '?' %}unknown{% else %}known{% endif %}">{{ letters[5] }}</text>
-<text x="15.5%" y="56.1%" id="letter7" class="{% if letters[6] == '?' %}unknown{% else %}known{% endif %}">{{ letters[6] }}</text>
-<text x="19.7%" y="32.5%" id="letter8" class="{% if letters[7] == '?' %}unknown{% else %}known{% endif %}">{{ letters[7] }}</text>
-<text x="38%" y="17.1%" id="letter9" class="{% if letters[8] == '?' %}unknown{% else %}known{% endif %}">{{ letters[8] }}</text>
+<text x="62%" y="17.1%" id="letter1" class="{% if state[0] == '?' %}unknown{% else %}known{% endif %}">{{ state[0] }}</text>
+<text x="80.3%" y="32.5%" id="letter2" class="{% if state[1] == '?' %}unknown{% else %}known{% endif %}">{{ state[1] }}</text>
+<text x="84.5%" y="56.1%" id="letter3" class="{% if state[2] == '?' %}unknown{% else %}known{% endif %}">{{ state[2] }}</text>
+<text x="72.5%" y="76.8%" id="letter4" class="{% if state[3] == '?' %}unknown{% else %}known{% endif %}">{{ state[3] }}</text>
+<text x="50%" y="85%" id="letter5" class="{% if state[4] == '?' %}unknown{% else %}known{% endif %}">{{ state[4] }}</text>
+<text x="27.5%" y="76.8%" id="letter6" class="{% if state[5] == '?' %}unknown{% else %}known{% endif %}">{{ state[5] }}</text>
+<text x="15.5%" y="56.1%" id="letter7" class="{% if state[6] == '?' %}unknown{% else %}known{% endif %}">{{ state[6] }}</text>
+<text x="19.7%" y="32.5%" id="letter8" class="{% if state[7] == '?' %}unknown{% else %}known{% endif %}">{{ state[7] }}</text>
+<text x="38%" y="17.1%" id="letter9" class="{% if state[8] == '?' %}unknown{% else %}known{% endif %}">{{ state[8] }}</text>
 {% endblock %}

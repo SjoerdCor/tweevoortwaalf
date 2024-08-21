@@ -1,9 +1,9 @@
 """Class to play the woordrader game from twee voor twaalf"""
 
 import csv
+import datetime
 import os
 import random
-import time
 from typing import List, Tuple
 
 import pandas as pd
@@ -65,15 +65,16 @@ class WoordRader:
         self.p_unknown = p_unknown
 
         self.guess = None
-        self.starttime = None
+        self.start_time = None
         self.guesstime = None
 
-    def _select_puzzle(self):
+    def select_puzzle(self):
         """Choose a new word to play"""
         wordlist = pd.read_csv(
             "tweevoortwaalf/Data/suitable_12_letter_words.txt", header=None
         ).squeeze()
         self.answer = wordlist.sample(1).squeeze()
+        self.start_time = datetime.datetime.now()
 
     def _generate_starting_position(self):
         state = {}
@@ -104,14 +105,14 @@ class WoordRader:
             }
         self.state = state
 
-    def initialize_game(self):
+    def create_puzzle(self):
         """Set up a new round of the anagram game"""
-        self._select_puzzle()
         self._generate_starting_position()
+        return self.state
 
-        self.guess = None
-        self.starttime = None
-        self.guesstime = None
+    def unique_solution(self):
+        """Determing whether the woordrader anagram is unique"""
+        return self.answer is not None  # TODO: implement by checking for anagrams
 
     def get_bottom_row(self) -> List[str]:
         """Calculate what to show on the bottom row
@@ -199,7 +200,7 @@ class WoordRader:
 
     def make_guess(self, guess):
         """Handle the guess as made by the user"""
-        self.guesstime = time.time() - self.starttime
+        self.guesstime = datetime.datetime.now()
         self.guess = guess.lower().replace("ij", "\u0133")
         if self.guess == self.answer:
             print(f"You won! The answer was {self.answer!r}")
@@ -213,7 +214,7 @@ class WoordRader:
         results = {
             "Answer": self.answer,
             "Guess": self.guess,
-            "Starttime": self.starttime,
+            "start_time": self.start_time,
             "Guesstime": self.guesstime,
         }
         by_quizposition = dict(sorted(self.state.items()))
@@ -228,7 +229,7 @@ class WoordRader:
 
     def play(self, write=True):
         """Play one round of the Woordrader game as text"""
-        self.starttime = time.time()
+        self.start_time = datetime.datetime.now()
         while self.guess is None:
             self.show_guess_panel()
             inp = input("Enter guess or placement of letter to buy")
