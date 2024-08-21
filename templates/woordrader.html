@@ -129,14 +129,9 @@
             }
 
             // Submit form with necessary actions
-            const form = document.getElementById('submitGuess');
-
-            console.log(form); // Check if the form element is being selected
-
-            form.addEventListener('submit', function(event) {
+            document.getElementById('submitGuess').addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent the form from submitting normally
 
-                console.log('default prevented')
                 clearInterval(countdown);
                 disableSubmitButton();
                 makeTopRowNonClickable();
