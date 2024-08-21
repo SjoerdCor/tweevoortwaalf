@@ -243,7 +243,7 @@ def buy_letter():
     session["woordrader"]["state"][quizposition]["bought"] = True
 
     data = {
-        "game_id": session["gameid"],
+        "game_id": session["woordrader"]["gameid"],
         "letterposition": quizposition,
         "buytime": datetime.datetime.now(),
     }
