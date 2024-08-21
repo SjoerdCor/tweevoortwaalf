@@ -80,8 +80,9 @@ def home():
 @app.route("/woordrader")
 def woordrader():
     """Home page"""
-    active = session.get("woordrader", {}).get("active", False)
-    state = session.get("woordrader", {}).get("state", WoordRader().state)
+    # active = session.get("woordrader", {}).get("active", False)
+    # state = session.get("woordrader", {}).get("state", WoordRader().state)
+    state = WoordRader().state
     active = False
     return render_template(
         "woordrader.html",
