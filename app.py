@@ -232,7 +232,7 @@ def buy_letter():
     """Handle buy letter request"""
     data = request.json
     quizposition = data.get("quizposition")
-    session["game_state"][quizposition]["bought"] = True
+    session["woordrader"]["state"][quizposition]["bought"] = True
 
     data = {
         "game_id": session["gameid"],
@@ -241,7 +241,7 @@ def buy_letter():
     }
     insert_data("woordrader.boughtletters", data)
 
-    return jsonify(session["game_state"])
+    return jsonify(session["woordrader"]["state"])
 
 
 if __name__ == "__main__":

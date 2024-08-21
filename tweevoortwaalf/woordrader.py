@@ -107,7 +107,6 @@ class WoordRader:
 
     def create_puzzle(self):
         """Set up a new round of the anagram game"""
-        self.select_puzzle()
         self._generate_starting_position()
         return self.state
 
