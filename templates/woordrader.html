@@ -49,7 +49,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const resultDiv = document.getElementById('result');
-            // const gamestate = {{ state|tojson|safe }};
             const topRowCells = document.querySelectorAll('#top-row .cell');
 
             // Load player name from local storage
@@ -64,20 +63,20 @@
             });
 
 
-                // Timer countdown
-                let timer = document.getElementById('timer');
-                let time = 120; // 2 minutes in seconds
-                countdown = setInterval(() => {
-                    if (time <= 0) {
-                        clearInterval(countdown);
-                        alert('Time is up!');
-                        return;
-                    }
-                    time--;
-                    const minutes = Math.floor(time / 60);
-                    const seconds = time % 60;
-                    timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                }, 1000);
+            // Timer countdown
+            let timer = document.getElementById('timer');
+            let time = 120; // 2 minutes in seconds
+            countdown = setInterval(() => {
+                if (time <= 0) {
+                    clearInterval(countdown);
+                    alert('Time is up!');
+                    return;
+                }
+                time--;
+                const minutes = Math.floor(time / 60);
+                const seconds = time % 60;
+                timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
 
 
 
@@ -91,15 +90,15 @@
                 var checkedRadioButton = document.querySelector('input[name="mode"]:checked');
 
                 disableForm(newGameForm);
-                enableForm(submitGuessForm);
                 const guessInput = document.getElementById('guessInput')
                 guessInput.value = ''
                 resultDiv.innerHTML = ''
+
                 var requestData = {
                         playername: playername,
                         mode: checkedRadioButton.value
                     };
-                console.log("into fetch")
+
                 fetch('{{ new_game_url }}', {
                     method: 'POST',
                     headers: {
@@ -116,7 +115,14 @@
                     const puzzleSpecific = document.getElementById('puzzleSpecific')
                     console.log(puzzleSpecific)
                     puzzleSpecific.innerHTML = data.html
+
+                    showTopRowLetters()
+                    makeTopRowClickable()
                 })
+
+
+                enableForm(submitGuessForm);
+
             });
 
             submitGuessForm.addEventListener('submit', function(event) {
@@ -168,6 +174,21 @@
                     resultHtml += `<p>The answer is "${answer}"</p>`;
                 resultDiv.innerHTML = resultHtml;
             }
+
+            function showTopRowLetters() {
+
+                console.log("add top row letters")
+                const gamestate = {{ state|tojson|safe }};
+                console.log(gamestate)
+
+                for (const [pos, cell] of Object.entries(gamestate)) {
+                    const cellUpperRow = document.getElementById(`upperrow-${pos}`);
+                    const shownLetter = cell.shown_letter;
+                    const letter = shownLetter.toLowerCase() === 'i' ? 'i' : shownLetter.toUpperCase();
+                    cellUpperRow.textContent = letter;
+                }
+            }
+
 
         });
 
@@ -228,16 +249,6 @@
                     disableClickabilityCell(pos);
                     }
                 });
-        }
-
-        function showTopRowLetters() {
-            for (const [pos, cell] of Object.entries(state)) {
-                const cellUpperRow = document.getElementById(`upperrow-${pos}`);
-                const shownLetter = cell.shown_letter;
-                const letter = shownLetter.toLowerCase() === 'i' ? 'i' : shownLetter.toUpperCase();
-                cellUpperRow.textContent = letter;
-
-            }
         }
 
         function submitGuess() {
