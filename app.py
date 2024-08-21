@@ -5,7 +5,7 @@ import os
 
 import psycopg
 from dotenv import load_dotenv
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, jsonify, render_template, request, session
 
 from tweevoortwaalf.paardensprong import Paardensprong
 from tweevoortwaalf.taartpuzzel import Taartpuzzel
@@ -111,7 +111,7 @@ def paardensprong():
 
 def new_puzzle(puzzlename, puzzleclass, **kwargs):
     """Base function for creating a new puzzle"""
-    playername = request.args.get("playername")
+    playername = request.json.get("playername")
 
     puzzle = puzzleclass(**kwargs)
     while not puzzle.unique_solution():
@@ -138,7 +138,8 @@ def new_puzzle(puzzlename, puzzleclass, **kwargs):
     session[puzzlename]["gameid"] = gameid
     session[puzzlename]["active"] = True
 
-    return redirect(url_for(puzzlename))
+    return render_template(puzzlename)
+    # return redirect(url_for(puzzlename))
 
 
 @app.route("/new_woordrader")
@@ -183,13 +184,13 @@ def new_woordrader():
     return response
 
 
-@app.route("/new_taartpuzzel")
+@app.route("/new_taartpuzzel", methods=["POST"])
 def new_taartpuzzel():
     """Create a new taartpuzzel"""
     return new_puzzle("taartpuzzel", Taartpuzzel)
 
 
-@app.route("/new_paardensprong")
+@app.route("/new_paardensprong", methods=["POST"])
 def new_paardensprong():
     """Create a new taartpuzzel"""
     return new_puzzle("paardensprong", Paardensprong)
@@ -197,7 +198,7 @@ def new_paardensprong():
 
 def handle_guess(puzzlename):
     """Base function for handling submitted guesses"""
-    guess_input = request.form.get("guess")
+    guess_input = request.json.get("guess")
     answer = session[puzzlename]["answer"]
     correct = is_guess_correct(guess_input, answer)
     data = {
@@ -207,12 +208,7 @@ def handle_guess(puzzlename):
         "correct": correct,
     }
     insert_data(f"{puzzlename}.guesses", data)
-    return render_template(
-        f"{puzzlename}.html",
-        state=session[puzzlename]["state"],
-        guess_correct=correct,
-        answer=answer,
-    )
+    return jsonify({"answer": answer, "correct": correct})
 
 
 @app.route("/guess_woordrader", methods=["POST"])
