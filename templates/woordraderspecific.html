@@ -1,7 +1,19 @@
 <div class="grid" id="top-row">
     {% for i in range(12) %}
-        <div class="cell active clickable" data-pos="{{ i }}" id="upperrow-{{ i }}">{{ state[i]["shown_letter"] }}</div>
+        <div class="cell {{ 'clickable' if active else 'inactive' }}" data-pos="{{ i }}" id="upperrow-{{ i }}">{{ state[i]["shown_letter"] }}</div>
     {% endfor %}
+    {% if active %}
+        {% for pos, cell in state.items() %}
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const cellUpperRow = document.getElementById(`upperrow-{{ pos }}`);
+                    const shownLetter = "{{ cell.shown_letter }}";
+                    const letter = shownLetter.toLowerCase() === 'i' ? 'i' : shownLetter.toUpperCase();
+                    cellUpperRow.textContent = letter;
+                });
+            </script>
+        {% endfor %}
+    {% endif %}
 </div>
 <div class="grid" id="numbers">
     {% for i in range(12) %}
@@ -10,6 +22,6 @@
 </div>
 <div class="grid" id="bottom-row">
     {% for pos in range(12) %}
-        <div class="cell active" id="lowerrow-{{ pos }}"></div>
+        <div class="cell {{ '' if active else 'inactive' }}" id="lowerrow-{{ pos }}"></div>
     {% endfor %}
 </div>
