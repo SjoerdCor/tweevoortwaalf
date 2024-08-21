@@ -71,12 +71,18 @@ def is_guess_correct(guess: str, answer: str) -> bool:
     return clean_str(guess) == clean_str(answer)
 
 
-@app.route("/")
-def index():
+@app.route("/woordrader")
+def woordrader():
     """Home page"""
     game_active = session.get("game_active", False)
     game_state = session.get("game_state", {})
-    return render_template("index.html", state=game_state, active=game_active)
+    return render_template(
+        "woordrader.html",
+        letters=game_state,
+        active=game_active,
+        guess_correct=None,
+        answer=None,
+    )
 
 
 @app.route("/taartpuzzel")
@@ -154,6 +160,12 @@ def handle_guess(puzzlename):
     )
 
 
+@app.route("/guess_woordrader", methods=["POST"])
+def guess_woordrader():
+    """Handle submitted guess for Woordrader"""
+    return handle_guess("woordrader")
+
+
 @app.route("/guess_taartpuzzel", methods=["POST"])
 def guess_taartpuzzel():
     """Handle submitted guess for Taartpuzzel"""
@@ -219,7 +231,7 @@ def new_game():
                 letterplacement_dct,
             )
             conn.commit()
-    return redirect(url_for("index"))
+    return redirect(url_for("woordrader"))
 
 
 @app.route("/buy_letter", methods=["POST"])
@@ -237,30 +249,6 @@ def buy_letter():
     insert_data("woordrader.boughtletters", data)
 
     return jsonify(session["game_state"])
-
-
-@app.route("/guess", methods=["POST"])
-def guess_woordrader():
-    """Handle a player guessing the end result"""
-    data = request.json
-    guess_input = data.get("guess")
-    answer = session["answer"].lower()
-    correct = guess_input.lower().strip().replace("ij", "\u0133") == answer
-    result = "Correct" if correct else "Incorrect"
-    result += f"! The correct answer is {answer!r}"
-
-    data = {
-        "game_id": session["gameid"],
-        "guess_time": datetime.datetime.now(),
-        "guess": guess_input,
-        "correct": correct,
-    }
-    insert_data("woordrader.guesses", data)
-
-    session["game_active"] = False
-    session["answer"] = None
-    session["game_state"] = {}
-    return jsonify({"result": result})
 
 
 if __name__ == "__main__":

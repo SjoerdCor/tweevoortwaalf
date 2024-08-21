@@ -1,3 +1,5 @@
+{% set submit_guess_url = url_for('guess_woordrader') %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +40,7 @@
             <div class="cell {{ 'clickable' if active else 'inactive' }}" data-pos="{{ i }}" id="upperrow-{{ i }}"></div>
         {% endfor %}
         {% if active %}
-            {% for pos, cell in state.items() %}
+            {% for pos, cell in letters.items() %}
                 <script>
                     document.addEventListener('DOMContentLoaded', () => {
                         const cellUpperRow = document.getElementById(`upperrow-{{ pos }}`);
@@ -60,11 +62,23 @@
             <div class="cell {{ '' if active else 'inactive' }}" id="lowerrow-{{ pos }}"></div>
         {% endfor %}
     </div>
-    <input type="text" id="guess-input" placeholder="Guess the word" {{ 'disabled' if not active }}>
-    <button id="submit-button" onclick="submitGuess()" {{ 'disabled' if not active }}>Submit</button>
 
-    <div id="result"></div>
-    <script>
+    <form action="{{ submit_guess_url }}" method="post" id="submitGuess">
+        <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="15" {{ 'disabled' if not active }}>
+        <input type="submit" id="submitButton" value="Submit Guess" {{ 'disabled' if not active }}>
+    </form>
+
+    <div id="result">
+        {% if guess_correct is not none %}
+            {% if guess_correct %}
+            <p>Correct!</p>
+            {% else %}
+            <p>Incorrect!</p>
+            {% endif %}
+            <p>The answer is "{{ answer }}"</p>
+        {% endif %}
+    </div>
+<script>
         let countdown;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -113,6 +127,23 @@
                     timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
                 }, 1000);
             }
+
+            // Submit form with necessary actions
+            const form = document.getElementById('submitGuess');
+
+            console.log(form); // Check if the form element is being selected
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+
+                console.log('default prevented')
+                clearInterval(countdown);
+                disableSubmitButton();
+                makeTopRowNonClickable();
+
+                this.submit(); // Submit the form after running the additional logic
+            });
+
         });
 
         function buyLetterEvent(event) {
@@ -150,7 +181,7 @@
         }
 
         function disableSubmitButton() {
-            const submitButton = document.getElementById('submit-button');
+            const submitButton = document.getElementById('submitButton');
             submitButton.disabled = true;
             submitButton.style.cursor = 'not-allowed';
         }
@@ -168,7 +199,7 @@
             disableSubmitButton();
             makeTopRowNonClickable();
 
-            const guess = document.getElementById('guess-input').value;
+            const guess = document.getElementById('submitButton').value;
             fetch('/guess', {
                 method: 'POST',
                 headers: {
