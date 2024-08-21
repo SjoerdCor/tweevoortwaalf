@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="new-game-section">
-        <form action="{{ new_game_url }}" method="get">
+        <form action="{{ new_game_url }}" method="get" id=newGameForm>
 
             <div class="player-name-section">
                 <label for="playername">Player Name:</label>
@@ -35,53 +35,23 @@
     </div>
 
     <div class="timer" id="timer">{{ '02:00' if active else '--:--' }}</div>
-    <div class="grid" id="top-row">
-        {% for i in range(12) %}
-            <div class="cell {{ 'clickable' if active else 'inactive' }}" data-pos="{{ i }}" id="upperrow-{{ i }}"></div>
-        {% endfor %}
-        {% if active %}
-            {% for pos, cell in state.items() %}
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        const cellUpperRow = document.getElementById(`upperrow-{{ pos }}`);
-                        const shownLetter = "{{ cell.shown_letter }}";
-                        const letter = shownLetter.toLowerCase() === 'i' ? 'i' : shownLetter.toUpperCase();
-                        cellUpperRow.textContent = letter;
-                    });
-                </script>
-            {% endfor %}
-        {% endif %}
-    </div>
-    <div class="grid" id="numbers">
-        {% for i in range(12) %}
-            <div class="number">{{ i + 1 }}</div>
-        {% endfor %}
-    </div>
-    <div class="grid" id="bottom-row">
-        {% for pos in range(12) %}
-            <div class="cell {{ '' if active else 'inactive' }}" id="lowerrow-{{ pos }}"></div>
-        {% endfor %}
-    </div>
+    <div id="puzzleSpecific"></div>
 
-    <form action="{{ submit_guess_url }}" method="post" id="submitGuess">
-        <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="15" {{ 'disabled' if not active }}>
-        <input type="submit" id="submitButton" value="Submit Guess" {{ 'disabled' if not active }}>
+    <form action="{{ submit_guess_url }}" method="post" id="submitGuessForm">
+        <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="15">
+        <input type="submit" value="Submit Guess">
     </form>
 
-    <div id="result">
-        {% if guess_correct is not none %}
-            {% if guess_correct %}
-            <p>Correct!</p>
-            {% else %}
-            <p>Incorrect!</p>
-            {% endif %}
-            <p>The answer is "{{ answer }}"</p>
-        {% endif %}
-    </div>
-<script>
+    <div id="result"></div>
+    <script>
+
         let countdown;
 
         document.addEventListener('DOMContentLoaded', () => {
+            const resultDiv = document.getElementById('result');
+            // const gamestate = {{ state|tojson|safe }};
+            const topRowCells = document.querySelectorAll('#top-row .cell');
+
             // Load player name from local storage
             const playerNameInput = document.getElementById('playername');
             const savedName = localStorage.getItem('playerName');
@@ -93,24 +63,6 @@
                 localStorage.setItem('playerName', playerNameInput.value);
             });
 
-            const active = {{ 'true' if active else 'false' }};
-            if (!active) {
-                document.getElementById('submit-button').disabled = true;
-                document.getElementById('guess-input').disabled = true;
-                const topRowCells = document.querySelectorAll('#top-row .cell');
-                topRowCells.forEach(cell => {
-                    cell.classList.remove('clickable');
-                    cell.classList.add('non-clickable');
-                });
-            } else {
-                const topRowCells = document.querySelectorAll('#top-row .cell');
-                topRowCells.forEach(cell => {
-                    cell.addEventListener('click', buyLetterEvent);
-                    if (cell.textContent.trim() === "-") {
-                        const pos = cell.getAttribute('data-pos');
-                        disableClickabilityCell(pos);
-                    }
-                });
 
                 // Timer countdown
                 let timer = document.getElementById('timer');
@@ -126,18 +78,96 @@
                     const seconds = time % 60;
                     timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
                 }, 1000);
+
+
+
+            // Toggle which form works
+            const newGameForm = document.getElementById('newGameForm');
+            const submitGuessForm = document.getElementById('submitGuessForm');
+
+            newGameForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const playername = document.getElementById("playername").value;
+                var checkedRadioButton = document.querySelector('input[name="mode"]:checked');
+
+                disableForm(newGameForm);
+                enableForm(submitGuessForm);
+                const guessInput = document.getElementById('guessInput')
+                guessInput.value = ''
+                resultDiv.innerHTML = ''
+                var requestData = {
+                        playername: playername,
+                        mode: checkedRadioButton.value
+                    };
+                console.log("into fetch")
+                fetch('{{ new_game_url }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                })
+                .then(
+                    response => {
+                        console.log(response)
+                        return response.json();
+                })
+                .then(data => {
+                    const puzzleSpecific = document.getElementById('puzzleSpecific')
+                    console.log(puzzleSpecific)
+                    puzzleSpecific.innerHTML = data.html
+                })
+            });
+
+            submitGuessForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const guess = document.getElementById('guessInput').value;
+                clearInterval(countdown);
+                disableForm(submitGuessForm);
+                makeTopRowNonClickable();
+                enableForm(newGameForm);
+
+                fetch('{{ submit_guess_url }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ guess }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateResultDiv(data);
+                })
+
+            });
+            function disableForm(form) {
+                Array.from(form.elements).forEach(element => {
+                    element.disabled = true;
+                });
             }
 
-            // Submit form with necessary actions
-            document.getElementById('submitGuess').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the form from submitting normally
+            function enableForm(form) {
+                Array.from(form.elements).forEach(element => {
+                    element.disabled = false;
+                });
+            }
 
-                clearInterval(countdown);
-                disableSubmitButton();
-                makeTopRowNonClickable();
+            function updateResultDiv(data) {
+                // Check if the expected properties are in the response
+                const answer = data.answer;
+                const correct = data.correct;
 
-                this.submit(); // Submit the form after running the additional logic
-            });
+                // Create HTML content based on the response
+                let resultHtml = '';
+                if (correct) {
+                    resultHtml += '<p>Correct!</p>';
+                } else {
+                    resultHtml += '<p>Incorrect!</p>';
+                }
+                    resultHtml += `<p>The answer is "${answer}"</p>`;
+                resultDiv.innerHTML = resultHtml;
+            }
 
         });
 
@@ -160,13 +190,13 @@
                 const cellUpperRow = document.getElementById(`upperrow-${quizposition}`);
                 const cellLowerRow = document.getElementById(`lowerrow-${data[quizposition].answer_position}`);
                 const letterData = data[quizposition];
-                if (letterData.bought) {
-                    cellUpperRow.textContent = "";
-                    const letter = letterData.true_letter.toLowerCase() === 'i' ? 'i' : letterData.true_letter.toUpperCase();
-                    cellLowerRow.textContent = letterData.correct ? letter : "?";
-                }
+
+                cellUpperRow.textContent = "";
+                const letter = letterData.true_letter.toLowerCase() === 'i' ? 'i' : letterData.true_letter.toUpperCase();
+                cellLowerRow.textContent = letterData.correct ? letter : "?";
             });
         }
+
 
         function disableClickabilityCell(pos) {
             const cell = document.getElementById(`upperrow-${pos}`);
@@ -187,6 +217,27 @@
                 const pos = cell.getAttribute('data-pos');
                 disableClickabilityCell(pos);
             });
+        }
+
+        function makeTopRowClickable() {
+            const topRowCells = document.querySelectorAll('#top-row .cell');
+            topRowCells.forEach(cell => {
+                cell.addEventListener('click', buyLetterEvent);
+                if (cell.textContent.trim() === "-") {
+                    const pos = cell.getAttribute('data-pos');
+                    disableClickabilityCell(pos);
+                    }
+                });
+        }
+
+        function showTopRowLetters() {
+            for (const [pos, cell] of Object.entries(state)) {
+                const cellUpperRow = document.getElementById(`upperrow-${pos}`);
+                const shownLetter = cell.shown_letter;
+                const letter = shownLetter.toLowerCase() === 'i' ? 'i' : shownLetter.toUpperCase();
+                cellUpperRow.textContent = letter;
+
+            }
         }
 
         function submitGuess() {

@@ -1,0 +1,15 @@
+<div class="grid" id="top-row">
+    {% for i in range(12) %}
+        <div class="cell {{ 'clickable' if active else 'inactive' }}" data-pos="{{ i }}" id="upperrow-{{ i }}"></div>
+    {% endfor %}
+</div>
+<div class="grid" id="numbers">
+    {% for i in range(12) %}
+        <div class="number">{{ i + 1 }}</div>
+    {% endfor %}
+</div>
+<div class="grid" id="bottom-row">
+    {% for pos in range(12) %}
+        <div class="cell {{ '' if active else 'inactive' }}" id="lowerrow-{{ pos }}"></div>
+    {% endfor %}
+</div>

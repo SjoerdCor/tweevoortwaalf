@@ -139,15 +139,15 @@ def new_puzzle(puzzlename, puzzleclass, **kwargs):
     session[puzzlename]["active"] = True
 
     html = render_template(
-        f"{puzzlename}specific.html", state=session[puzzlename]["state"]
+        f"{puzzlename}specific.html", state=session[puzzlename]["state"], active=True
     )
     return jsonify({"html": html})
 
 
-@app.route("/new_woordrader")
+@app.route("/new_woordrader", methods=["POST"])
 def new_woordrader():
     """Create a new Woordrader puzzle"""
-    mode = request.form.get("mode", "normal")
+    mode = request.json.get("mode", "normal")
     if mode == "easy":
         p_wrong = 0
         p_unknown = 0
