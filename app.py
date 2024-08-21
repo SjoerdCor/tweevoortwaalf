@@ -71,6 +71,12 @@ def is_guess_correct(guess: str, answer: str) -> bool:
     return clean_str(guess) == clean_str(answer)
 
 
+@app.route("/")
+def home():
+    """Home page"""
+    return render_template("index.html")
+
+
 @app.route("/woordrader")
 def woordrader():
     """Home page"""
