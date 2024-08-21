@@ -1,6 +1,6 @@
 <div class="grid" id="top-row">
     {% for i in range(12) %}
-        <div class="cell {{ 'clickable' if active else 'inactive' }}" data-pos="{{ i }}" id="upperrow-{{ i }}">{{ state[i]["shown_letter"] }}</div>
+        <div class="cell active" data-pos="{{ i }}" id="upperrow-{{ i }}">{{ state[i]["shown_letter"] }}</div>
     {% endfor %}
 </div>
 <div class="grid" id="numbers">
@@ -10,6 +10,6 @@
 </div>
 <div class="grid" id="bottom-row">
     {% for pos in range(12) %}
-        <div class="cell {{ '' if active else 'inactive' }}" id="lowerrow-{{ pos }}"></div>
+        <div class="cell active" id="lowerrow-{{ pos }}"></div>
     {% endfor %}
 </div>

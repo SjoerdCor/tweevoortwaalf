@@ -82,6 +82,7 @@ def woordrader():
     """Home page"""
     active = session.get("woordrader", {}).get("active", False)
     state = session.get("woordrader", {}).get("state", {})
+    active = False
     return render_template(
         "woordrader.html",
         state=state,
@@ -210,6 +211,8 @@ def handle_guess(puzzlename):
         "correct": correct,
     }
     insert_data(f"{puzzlename}.guesses", data)
+
+    session[puzzlename]["active"] = False
     return jsonify({"answer": answer, "correct": correct})
 
 
