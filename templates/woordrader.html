@@ -1,242 +1,52 @@
-{% extends 'base.html' %}
-{% set quizname = 'Woordrader' %}
 {% set new_game_url = url_for('new_woordrader') %}
 {% set submit_guess_url = url_for('guess_woordrader') %}
-{% block extrainfogamesetup %}
-<label>
-    <input type="radio" name="mode" value="normal"
-        {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
-</label>
-<label>
-    <input type="radio" name="mode" value="easy"
-        {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
-</label>
-{% endblock %}
 
-{% block puzzle %}
-<div id="puzzleSpecific">
-    {% include "woordraderspecific.html" %}
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2 voor 12 - Word Puzzle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="new-game-section">
+        <form data-new-game-url="{{ new_game_url }}" id=newGameForm>
 
-    <script>
+            <div class="player-name-section">
+                <label for="playername">Player Name:</label>
+                <input type="text" id="playername" name="playername" maxlength="15" placeholder="Enter your name">
+                <div class="tooltip">
+                    <span class="info-icon">ℹ️</span>
+                    <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
+                </div>
+            </div>
 
-        let countdown;
+            <label>
+                <input type="radio" name="mode" value="normal"
+                    {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
+            </label>
+            <label>
+                <input type="radio" name="mode" value="easy"
+                    {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
+            </label>
+            <button type="submit">New Game</button>
+        </form>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const resultDiv = document.getElementById('result');
-            const topRowCells = document.querySelectorAll('#top-row .cell');
+    <div class="timer" id="timer">{{ '02:00' if active else '--:--' }}</div>
+    <div id="puzzleSpecific">
+        {% include "woordraderspecific.html" %}
+    </div>
 
-            // Load player name from local storage
-            const playerNameInput = document.getElementById('playername');
-            const savedName = localStorage.getItem('playerName');
-            if (savedName) {
-                playerNameInput.value = savedName;
-            }
+    <form data-submit-guess-url="{{ submit_guess_url }}" method="post" id="submitGuessForm">
+        <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="15">
+        <input type="submit" value="Submit Guess">
+    </form>
 
-            playerNameInput.addEventListener('blur', () => {
-                localStorage.setItem('playerName', playerNameInput.value);
-            });
+    <div id="result"></div>
 
-            // Toggle which form works
-            const newGameForm = document.getElementById('newGameForm');
-            const submitGuessForm = document.getElementById('submitGuessForm');
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-            newGameForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const playername = document.getElementById("playername").value;
-                var checkedRadioButton = document.querySelector('input[name="mode"]:checked');
-
-                disableForm(newGameForm);
-                const guessInput = document.getElementById('guessInput')
-                guessInput.value = ''
-                resultDiv.innerHTML = ''
-
-                var requestData = {
-                        playername: playername,
-                        mode: checkedRadioButton.value
-                    };
-
-                fetch('{{ new_game_url }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData),
-                })
-                .then(
-                    response => {
-                        console.log(response)
-                        return response.json();
-                })
-                .then(data => {
-                    const puzzleSpecific = document.getElementById('puzzleSpecific')
-                    console.log(puzzleSpecific)
-                    puzzleSpecific.innerHTML = data.html
-
-                    showTopRowLettersAsCapitals()
-                    makeTopRowClickable()
-                })
-
-
-                enableForm(submitGuessForm);
-                            // Timer countdown
-                let timer = document.getElementById('timer');
-                let time = 120; // 2 minutes in seconds
-                countdown = setInterval(() => {
-                    if (time <= 0) {
-                        clearInterval(countdown);
-                        alert('Time is up!');
-                        return;
-                    }
-                    time--;
-                    const minutes = Math.floor(time / 60);
-                    const seconds = time % 60;
-                    timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                }, 1000);
-
-
-            });
-
-            submitGuessForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const guess = document.getElementById('guessInput').value;
-                clearInterval(countdown);
-                disableForm(submitGuessForm);
-                makeTopRowNonClickable();
-                enableForm(newGameForm);
-
-                fetch('{{ submit_guess_url }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ guess }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    updateResultDiv(data);
-                })
-
-            });
-            function disableForm(form) {
-                Array.from(form.elements).forEach(element => {
-                    element.disabled = true;
-                });
-            }
-
-            function enableForm(form) {
-                Array.from(form.elements).forEach(element => {
-                    element.disabled = false;
-                });
-            }
-
-            function updateResultDiv(data) {
-                // Check if the expected properties are in the response
-                const answer = data.answer;
-                const correct = data.correct;
-
-                // Create HTML content based on the response
-                let resultHtml = '';
-                if (correct) {
-                    resultHtml += '<p>Correct!</p>';
-                } else {
-                    resultHtml += '<p>Incorrect!</p>';
-                }
-                    resultHtml += `<p>The answer is "${answer}"</p>`;
-                resultDiv.innerHTML = resultHtml;
-            }
-
-            function showTopRowLettersAsCapitals() {
-
-                const topRowCells = document.querySelectorAll('#top-row .cell');
-                topRowCells.forEach(cell => {
-                    const letter = cell.textContent.toLowerCase() === 'i' ? 'i' : cell.textContent.toUpperCase();
-                    cell.textContent = letter
-                });
-            }
-
-
-        });
-
-        function buyLetterEvent(event) {
-            const pos = event.currentTarget.getAttribute('data-pos');
-            buyLetter(pos);
-            disableClickabilityCell(pos);
-        }
-
-        function buyLetter(quizposition) {
-            fetch('/buy_letter', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ quizposition }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                const cellUpperRow = document.getElementById(`upperrow-${quizposition}`);
-                const cellLowerRow = document.getElementById(`lowerrow-${data[quizposition].answer_position}`);
-                const letterData = data[quizposition];
-
-                cellUpperRow.textContent = "";
-                const letter = letterData.true_letter.toLowerCase() === 'i' ? 'i' : letterData.true_letter.toUpperCase();
-                cellLowerRow.textContent = letterData.correct ? letter : "?";
-            });
-        }
-
-
-        function disableClickabilityCell(pos) {
-            const cell = document.getElementById(`upperrow-${pos}`);
-            cell.classList.remove('clickable');
-            cell.classList.add('non-clickable');
-            cell.removeEventListener('click', buyLetterEvent);
-        }
-
-        function disableSubmitButton() {
-            const submitButton = document.getElementById('submitButton');
-            submitButton.disabled = true;
-            submitButton.style.cursor = 'not-allowed';
-        }
-
-        function makeTopRowNonClickable() {
-            const topRowCells = document.querySelectorAll('#top-row .cell');
-            topRowCells.forEach(cell => {
-                const pos = cell.getAttribute('data-pos');
-                disableClickabilityCell(pos);
-            });
-        }
-
-        function makeTopRowClickable() {
-            const topRowCells = document.querySelectorAll('#top-row .cell');
-            topRowCells.forEach(cell => {
-                cell.addEventListener('click', buyLetterEvent);
-                if (cell.textContent.trim() === "-") {
-                    const pos = cell.getAttribute('data-pos');
-                    disableClickabilityCell(pos);
-                    }
-                });
-        }
-
-        function submitGuess() {
-            clearInterval(countdown);
-            disableSubmitButton();
-            makeTopRowNonClickable();
-
-            const guess = document.getElementById('submitButton').value;
-            fetch('/guess', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ guess }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('result').textContent = data.result;
-            });
-        }
-    </script>
 </body>
 </html>
