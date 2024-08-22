@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             const puzzleSpecific = document.getElementById('puzzleSpecific')
-            console.log(puzzleSpecific)
             puzzleSpecific.innerHTML = data.html
 
             showTopRowLettersAsCapitals()
