@@ -1,137 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ quizname }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/small_puzzles.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>{{ quizname }}</h1>
-        <div class="new-game-section">
-            <form action="{{ new_game_url }}" method="get" id=newGameForm>
+{% extends 'base.html' %}
 
-                <div class="player-name-section">
-                    <label for="playername">Player Name:</label>
-                    <input type="text" id="playername" name="playername" maxlength="15" placeholder="Enter your name">
-                    <div class="tooltip">
-                        <span class="info-icon">ℹ️</span>
-                        <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
-                    </div>
-                </div>
-                <button type="submit">New Game</button>
-            </form>
-        </div>
+{% block extracss %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/small_puzzles.css') }}">
+{% endblock %}
 
-        <div class="puzzleimage">
-            <svg width="100%" height="100%" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-            {% block puzzleimageframework %}{% endblock %}
-            <g id="puzzlespecific"></g>
-            </svg>
-        </div>
+{% block puzzle %}
+<div class="puzzleimage">
+    <svg width="100%" height="100%" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+    {% block puzzleimageframework %}{% endblock %}
+    <g id="puzzlespecific"></g>
+    </svg>
+</div>
+{% endblock %}
 
-        <form action="{{ submit_guess_url }}" method="post" id="submitGuessForm">
-            <input type="text" id="guessInput" name="guess" placeholder="Enter your guess" maxlength="12">
-            <input type="submit" value="Submit Guess">
-        </form>
-
-        <div id="result"></div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load player name from local storage
-            const playerNameInput = document.getElementById('playername');
-            const savedName = localStorage.getItem('playerName');
-            if (savedName) {
-                playerNameInput.value = savedName;
-            }
-
-            playerNameInput.addEventListener('blur', () => {
-                localStorage.setItem('playerName', playerNameInput.value);
-            });
-
-            // Toggle which form works
-            const newGameForm = document.getElementById('newGameForm');
-            const submitGuessForm = document.getElementById('submitGuessForm');
-            const resultDiv = document.getElementById('result');
-
-            newGameForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const playername = document.getElementById("playername").value;
-
-                disableForm(newGameForm);
-                enableForm(submitGuessForm);
-                const guessInput = document.getElementById('guessInput')
-                guessInput.value = ''
-                resultDiv.innerHTML = ''
-
-                fetch('{{ new_game_url }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ playername }),
-                })
-                .then(
-                    response => {
-                        return response.json();
-                })
-                .then(data => {
-                    const puzzleSpecific = document.getElementById('puzzlespecific')
-                    puzzleSpecific.innerHTML = data.html
-                })
-            });
-
-            submitGuessForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const guess = document.getElementById('guessInput').value;
-                disableForm(submitGuessForm);
-                enableForm(newGameForm);
-                fetch('{{ submit_guess_url }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ guess }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    updateResultDiv(data);
-                })
-
-            });
-
-            function disableForm(form) {
-                Array.from(form.elements).forEach(element => {
-                    element.disabled = true;
-                });
-            }
-
-            function enableForm(form) {
-                Array.from(form.elements).forEach(element => {
-                    element.disabled = false;
-                });
-            }
-
-            function updateResultDiv(data) {
-                // Check if the expected properties are in the response
-                const answer = data.answer;
-                const correct = data.correct;
-
-                // Create HTML content based on the response
-                let resultHtml = '';
-                if (correct) {
-                    resultHtml += '<p>Correct!</p>';
-                } else {
-                    resultHtml += '<p>Incorrect!</p>';
-                }
-                    resultHtml += `<p>The answer is "${answer}"</p>`;
-                resultDiv.innerHTML = resultHtml;
-            }
-
-        });
-    </script>
-</body>
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/smallpuzzles.js') }}"></script>
+{% endblock %}
