@@ -114,7 +114,7 @@ function setupGameForm({ hasMode, toprowFunctions }) {
         })
             .then(response => response.json())
             .then(data => {
-                const puzzleSpecific = document.getElementById('puzzleSpecific');
+                const puzzleSpecific = document.getElementById('puzzlespecific');
                 puzzleSpecific.innerHTML = data.html;
 
                 if (toprowFunctions) {
