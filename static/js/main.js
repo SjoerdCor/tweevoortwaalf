@@ -66,26 +66,6 @@ function makeTopRowClickable() {
     });
 }
 
-function submitGuess() {
-    clearInterval(countdown);
-    disableSubmitButton();
-    makeTopRowNonClickable();
-
-    const guess = document.getElementById('submitButton').value;
-    fetch('/guess', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ guess }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('result').textContent = data.result;
-        });
-}
-
-
 function setupGameForm({ hasMode, toprowFunctions }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
