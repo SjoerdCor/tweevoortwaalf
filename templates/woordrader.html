@@ -3,24 +3,38 @@
 {% set submit_guess_url = url_for('guess_woordrader') %}
 {% set timelimit = 120 %}
 
+{% block spelregels %}
+Raad het woord! <br>
+Het doel is om het twaalfletterwoord te raden met zo min mogelijk gekochte letters <br>
+Je beginletters staan in de bovenste rij. Het woord is een anagram van deze letters.
+Maar let op! Sommige letters zijn mogelijk onbekend (weergegeven als "-") en het kan zijn
+dat sommige fout zijn. <br>
+Je kunt letters kopen door erop te klikken. Ze komen dan in de onderste rij op de goede plek te staan. Het doel
+is zo min mogelijk letters te kopen. Als je een letter koopt die niet goed is, wordt deze
+in de onderste rij als "?" weergegeven. Ontbrekende letters ("-") kun je niet kopen.<br><br>
 
-    {% block extrainfogamesetup %}
-    <label>
-        <input type="radio" name="mode" value="normal"
-            {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
-    </label>
-    <label>
-        <input type="radio" name="mode" value="easy"
-            {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
-    </label>
-    {% endblock %}
+Modes: je kunt het spel spelen in twee modes:<br>
+easy: alle letters zijn gegeven en correct<br>
+normal: elk vakje heeft een 5% kans om te ontbreken en 5% kans om incorrect te zijn
+{% endblock %}
 
-    {% block puzzle %}
-    <div id="puzzlespecific">
-        {% include "woordraderspecific.html" %}
-    </div>
-    {% endblock %}
+{% block extrainfogamesetup %}
+<label>
+    <input type="radio" name="mode" value="normal"
+        {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
+</label>
+<label>
+    <input type="radio" name="mode" value="easy"
+        {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
+</label>
+{% endblock %}
 
-    {% block morescripts %}
-    <script src="{{ url_for('static', filename='js/woordrader.js') }}"></script>
-    {% endblock %}
+{% block puzzle %}
+<div id="puzzlespecific">
+    {% include "woordraderspecific.html" %}
+</div>
+{% endblock %}
+
+{% block morescripts %}
+<script src="{{ url_for('static', filename='js/woordrader.js') }}"></script>
+{% endblock %}
