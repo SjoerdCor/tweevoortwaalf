@@ -4,6 +4,12 @@
 {% set new_game_url = url_for('new_taartpuzzel') %}
 {% set submit_guess_url = url_for('guess_taartpuzzel') %}
 
+{% block spelregels %}
+Raad het woord! <br>
+In deze taart staat een woord van 9 letters, waarvan 1 ontbreekt en is vervangen door het vraagteken.<br>
+Bepaal waar het woord begint en of het mee of tegen de klok in moet worden gelezen.
+{% endblock %}
+
 {% block puzzleimageframework %}
 <!-- Outer circle -->
 <circle cx="50%" cy="50%" r="50%"/>

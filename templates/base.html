@@ -19,6 +19,14 @@
                     <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
                 </div>
             </div>
+            <div id="spelregels">
+                <span class="bold">Spelregels</span>
+                <div class="tooltip">
+                    <span class="info-icon">ℹ️</span>
+                    <span class="tooltiptext">{% block spelregels %}{% endblock %}</span>
+                </div>
+            </div>
+
             {% block extrainfogamesetup %}{% endblock %}
 
             <button type="submit">New Game</button>
