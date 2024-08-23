@@ -1,0 +1,49 @@
+body {
+    background-color: #f0f0f0; /* Light grey background matching the rest of your site */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff; /* White background for the content area */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    color: #333; /* Dark color for text for better readability */
+}
+
+.btn-primary {
+    background-color: red; /* Primary button color matching your site */
+    border-color: red;
+    font-size: 1.25rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: #ffffff; /* White text on primary buttons */
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: darkred; /* Darker shade for hover effect */
+    border-color: darkred;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem darkred; /* Focus effect */
+}
+
+.btn-group-vertical .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px; /* Spacing between buttons */
+}

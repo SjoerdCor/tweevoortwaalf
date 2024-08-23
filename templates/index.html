@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2 voor 12 - Kies je spel!</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" integrity="sha256-/ykJw/wDxMa0AQhHDYfuMEwVb4JHMx9h4jD4XvHqVzU=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 </head>
 <body>
-    <h1>Kies je spel!</h1>
-    <a href="{{ url_for('woordrader') }}" class='btn btn-primary'>Woordrader</a>
-    <a href="{{ url_for('paardensprong') }}" class='btn btn-primary'>Paardensprong</a>
-    <a href="{{ url_for('taartpuzzel') }}" class='btn btn-primary'>Taartpuzzel</a>
+    <div class="container">
+        <h1>Kies je spel!</h1>
+        <div class="btn-group-vertical">
+            <a href="{{ url_for('woordrader') }}" class='btn btn-primary mb-3'>Woordrader</a>
+            <a href="{{ url_for('paardensprong') }}" class='btn btn-primary mb-3'>Paardensprong</a>
+            <a href="{{ url_for('taartpuzzel') }}" class='btn btn-primary'>Taartpuzzel</a>
+        </div>
+    </div>
 </body>
 </html>
-
