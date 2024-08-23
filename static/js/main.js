@@ -184,10 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('playerName', playerNameInput.value);
     });
 
-    setupGameForm({
-        hasMode: true,
-        toprowFunctions: true
-    });
     handleSubmit()
 
 });
