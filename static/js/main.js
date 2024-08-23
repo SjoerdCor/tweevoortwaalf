@@ -25,12 +25,14 @@ function updateResultDiv(data) {
     resultDiv.innerHTML = resultHtml;
 }
 
-function showTopRowLettersAsCapitals() {
+function capitalizeLetterExceptI(letter) {
+    return letter.toLowerCase() === 'i' ? 'i' : letter.toUpperCase();
+}
 
-    const topRowCells = document.querySelectorAll('#top-row .cell');
-    topRowCells.forEach(cell => {
-        const letter = cell.textContent.toLowerCase() === 'i' ? 'i' : cell.textContent.toUpperCase();
-        cell.textContent = letter
+function capitalizePuzzleLetters(selector) {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(element => {
+        element.textContent = capitalizeLetterExceptI(element.textContent);
     });
 }
 
@@ -66,7 +68,7 @@ function makeTopRowClickable() {
     });
 }
 
-function setupGameForm({ hasMode, toprowFunctions }) {
+function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
     newGameForm.addEventListener('submit', function (event) {
@@ -94,9 +96,8 @@ function setupGameForm({ hasMode, toprowFunctions }) {
             .then(data => {
                 const puzzleSpecific = document.getElementById('puzzlespecific');
                 puzzleSpecific.innerHTML = data.html;
-
+                capitalizePuzzleLetters(puzzleLettersQuery)
                 if (toprowFunctions) {
-                    showTopRowLettersAsCapitals();
                     makeTopRowClickable();
                 }
             });
@@ -186,7 +187,7 @@ function buyLetter(quizposition) {
             const letterData = data[quizposition];
 
             cellUpperRow.textContent = "";
-            const letter = letterData.true_letter.toLowerCase() === 'i' ? 'i' : letterData.true_letter.toUpperCase();
+            const letter = capitalizeLetterExceptI(letterData.true_letter)
             cellLowerRow.textContent = letterData.correct ? letter : "?";
         });
 }
