@@ -25,7 +25,7 @@
         </form>
     </div>
 
-    <div class="timer" id="timer">{{ '02:00' if active else '--:--' }}</div>
+    <div class="timer" id="timer" data-duration="{{ timelimit }}">{{ '02:00' if active else '--:--' }}</div>
 
     {% block puzzle %}{%endblock %}
 

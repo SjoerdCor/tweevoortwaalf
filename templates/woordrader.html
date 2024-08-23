@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% set new_game_url = url_for('new_woordrader') %}
 {% set submit_guess_url = url_for('guess_woordrader') %}
+{% set timelimit = 120 %}
 
 
     {% block extrainfogamesetup %}
@@ -22,4 +23,5 @@
 
     {% block scripts %}
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/woordrader.js') }}"></script>
     {% endblock %}
