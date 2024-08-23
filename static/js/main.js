@@ -21,7 +21,8 @@ function updateResultDiv(data) {
     } else {
         resultHtml += '<p>Incorrect!</p>';
     }
-    resultHtml += `<p>The answer is "${answer}"</p>`;
+    const link = `https://www.vandale.nl/gratis-woordenboek/nederlands/betekenis/${answer}`;
+    resultHtml += `<p>The answer is <a href="${link}" target="_blank">${answer}</a></p>`;
     resultDiv.innerHTML = resultHtml;
 }
 
