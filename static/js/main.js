@@ -36,8 +36,6 @@ function showTopRowLettersAsCapitals() {
     });
 }
 
-
-
 function disableClickabilityCell(pos) {
     const cell = document.getElementById(`upperrow-${pos}`);
     cell.classList.remove('clickable');
@@ -128,7 +126,7 @@ function setupGameForm({ hasMode, toprowFunctions }) {
         enableForm(submitGuessForm);
 
         let time = timerDuration;
-        let countdown = setInterval(() => {
+        countdown = setInterval(() => {
             if (time <= 0) {
                 clearInterval(countdown);
                 alert('Time is up!');
@@ -142,28 +140,7 @@ function setupGameForm({ hasMode, toprowFunctions }) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    resultDiv = document.getElementById('result');
-    newGameForm = document.getElementById('newGameForm');
-    submitGuessForm = document.getElementById('submitGuessForm');
-    timerElement = document.getElementById('timer');
-
-    // Load player name from local storage
-    const playerNameInput = document.getElementById('playername');
-    const savedName = localStorage.getItem('playerName');
-    if (savedName) {
-        playerNameInput.value = savedName;
-    }
-
-    playerNameInput.addEventListener('blur', () => {
-        localStorage.setItem('playerName', playerNameInput.value);
-    });
-
-    setupGameForm({
-        hasMode: true,
-        toprowFunctions: true
-    });
-
+function handleSubmit() {
     submitGuessForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -188,6 +165,30 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
     });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    resultDiv = document.getElementById('result');
+    newGameForm = document.getElementById('newGameForm');
+    submitGuessForm = document.getElementById('submitGuessForm');
+    timerElement = document.getElementById('timer');
+
+    // Load player name from local storage
+    const playerNameInput = document.getElementById('playername');
+    const savedName = localStorage.getItem('playerName');
+    if (savedName) {
+        playerNameInput.value = savedName;
+    }
+
+    playerNameInput.addEventListener('blur', () => {
+        localStorage.setItem('playerName', playerNameInput.value);
+    });
+
+    setupGameForm({
+        hasMode: true,
+        toprowFunctions: true
+    });
+    handleSubmit()
 
 });
 
