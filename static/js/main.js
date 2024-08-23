@@ -12,11 +12,9 @@ function enableForm(form) {
 }
 
 function updateResultDiv(data) {
-    // Check if the expected properties are in the response
     const answer = data.answer;
     const correct = data.correct;
 
-    // Create HTML content based on the response
     let resultHtml = '';
     if (correct) {
         resultHtml += '<p>Correct!</p>';
@@ -173,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
     submitGuessForm = document.getElementById('submitGuessForm');
     timerElement = document.getElementById('timer');
 
-    // Load player name from local storage
     const playerNameInput = document.getElementById('playername');
     const savedName = localStorage.getItem('playerName');
     if (savedName) {
