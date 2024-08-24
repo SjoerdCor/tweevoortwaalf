@@ -26,4 +26,4 @@ build-backend = "setuptools.build_meta"
 packages = ["tweevoortwaalf"]
 
 [tool.setuptools.package-data]
-"tweevoortwaalf" = ["Data/wordlist.csv"]
+"tweevoortwaalf" = ["Data/suitable_8_letter_words.txt", "Data/suitable_9_letter_words.txt", "Data/suitable_12_letter_words.txt", ]
