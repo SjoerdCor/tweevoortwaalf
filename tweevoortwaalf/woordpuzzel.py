@@ -3,6 +3,7 @@
 import abc
 import csv
 import datetime
+import importlib
 import os
 import random
 
@@ -34,6 +35,14 @@ class Woordpuzzel:
     def n_letters(self) -> int:
         """The number of letters in the puzzle"""
 
+    @property
+    def wordlist(self) -> pd.Series:
+        """Get all suitable words"""
+        data_path = importlib.resources.files("tweevoortwaalf.Data").joinpath(
+            f"suitable_{self.n_letters}_letter_words.txt"
+        )
+        return pd.read_csv(data_path)
+
     @abc.abstractmethod
     def unique_solution(self):
         """Determines whether puzzle has a unique solutions. Must be implemented by subclasses"""
@@ -49,11 +58,7 @@ class Woordpuzzel:
 
     def select_puzzle(self):
         """Selects the puzzle answer"""
-        wordlist = pd.read_csv(
-            f"tweevoortwaalf/Data/suitable_{self.n_letters}_letter_words.txt",
-            header=None,
-        ).squeeze()
-        self.answer = wordlist.sample(1).squeeze()
+        self.answer = self.wordlist.sample(1).squeeze()
         self.start_time = datetime.datetime.now()  # TODO: move to create_puzzle
 
     def _write_to_file(self):

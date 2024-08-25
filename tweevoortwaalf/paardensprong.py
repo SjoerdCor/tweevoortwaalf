@@ -2,8 +2,6 @@
 
 from typing import List
 
-import pandas as pd
-
 from .woordpuzzel import Woordpuzzel
 
 
@@ -27,13 +25,8 @@ class Paardensprong(Woordpuzzel):
 
     def unique_solution(self):
         """Rotations can not lead to an alternative solution"""
-        otherwords = set(
-            pd.read_csv(
-                "tweevoortwaalf/Data/suitable_8_letter_words.txt", header=None
-            ).squeeze()
-        )
         for i in range(1, len(self.answer)):
-            if self.rotate(self.answer, i) in otherwords:
+            if self.rotate(self.answer, i) in self.wordlist:
                 return False
         return True
 
