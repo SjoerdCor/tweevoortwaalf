@@ -17,3 +17,11 @@ CREATE TABLE IF NOT EXISTS paardensprong.guesses (
     correct BOOLEAN NOT NULL,
     UNIQUE (game_id)
 );
+
+CREATE TABLE IF NOT EXISTS paardensprong.puzzleoptions (
+    option_id SERIAL PRIMARY KEY,
+    answer CHAR(8) NOT NULL,
+    startpoint INT NOT NULL,
+    direction INT NOT NULL,
+    probability NUMERIC(5, 4) NOT NULL
+);
