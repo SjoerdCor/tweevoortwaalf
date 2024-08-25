@@ -10,7 +10,23 @@ In deze puzzel staat een woord van 8 letters, gelezen als een paardensprong.<br>
 Na de eerste letter moet telkens worden gesprongen als een paard in het schaakspel -
 oftewel 2 vakjes worden overgeslagen. Bepaal waar het woord begint en of het mee of
 tegen de klok in moet worden gelezen.
+
+Modes: je kunt het spel spelen in twee modes:<br>
+normal: De puzzel wordt willekeurig gekozen<br>
+hard: er is een grotere kans om een moeilijke puzzel te krijgen (gebaseerd op een model om de kans op een goed antwoord in te schatten)
 {% endblock %}
+
+{% block extrainfogamesetup %}
+<label>
+    <input type="radio" name="mode" value="normal"
+        {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
+</label>
+<label>
+    <input type="radio" name="mode" value="hard"
+        {% if session.get('mode') == 'hard' %}checked{% endif %}> Hard Mode
+</label>
+{% endblock %}
+
 
 {% block puzzleimageframework%}
 <!-- Draw grid cells and letters using relative positioning -->
@@ -31,4 +47,8 @@ tegen de klok in moet worden gelezen.
 <rect x="3.33%" y="70%" width="26.66%" height="26.66%" />
 <rect x="36.66%" y="70%" width="26.66%" height="26.66%" />
 <rect x="70%" y="70%" width="26.66%" height="26.66%" />
+{% endblock %}
+
+{% block morescripts %}
+<script src="{{ url_for('static', filename='js/paardensprong.js') }}"></script>
 {% endblock %}

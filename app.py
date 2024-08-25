@@ -3,9 +3,11 @@
 import datetime
 import os
 
+import pandas as pd
 import psycopg
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, session
+from sqlalchemy import create_engine
 
 from tweevoortwaalf.paardensprong import Paardensprong
 from tweevoortwaalf.taartpuzzel import Taartpuzzel
@@ -56,6 +58,11 @@ def insert_data(table_name: str, data: dict, return_game_id=False) -> int | None
                 return result
             conn.commit()
             return None
+
+
+def probability_option(p: float) -> float:
+    """Get options with probability closest to 50%"""
+    return p - p**2
 
 
 def clean_str(strng: str) -> str:
@@ -119,6 +126,7 @@ def new_puzzle(puzzlename, puzzleclass, **kwargs):
     while not puzzle.unique_solution():
         puzzle.select_puzzle()
 
+    puzzle.start_time = datetime.datetime.now()
     data = puzzle.__dict__.copy()
     # Not known at creation yet, so don't write
     to_eliminate = {"guesstime", "guess", "correct"}
@@ -184,7 +192,6 @@ def new_woordrader():
                 letterplacements,
             )
             conn.commit()
-    print(session["woordrader"]["state"])
     return response
 
 
@@ -197,7 +204,29 @@ def new_taartpuzzel():
 @app.route("/new_paardensprong", methods=["POST"])
 def new_paardensprong():
     """Create a new taartpuzzel"""
-    return new_puzzle("paardensprong", Paardensprong)
+
+    mode = request.json.get("mode", "normal")
+    if mode == "normal":
+        kwargs = {}
+    elif mode == "hard":
+        database_url = os.getenv("DATABASE_URL").replace(
+            "postgresql", "postgresql+psycopg"
+        )
+        engine = create_engine(database_url)
+        with engine.connect() as conn:
+            puzzleoptions = pd.read_sql_query(
+                "SELECT * FROM paardensprong.puzzleoptions", con=conn
+            )
+        p = probability_option(puzzleoptions["probability"])
+        chosen_puzzle = puzzleoptions.sample(weights=p).squeeze()
+        kwargs = {
+            "answer": chosen_puzzle["answer"],
+            "direction": chosen_puzzle["direction"],
+            "startpoint": chosen_puzzle["startpoint"],
+        }
+    else:
+        raise ValueError(f"Unknown mode {mode!r}")
+    return new_puzzle("paardensprong", Paardensprong, **kwargs)
 
 
 def handle_guess(puzzlename):
