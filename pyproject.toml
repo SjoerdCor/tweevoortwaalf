@@ -11,10 +11,11 @@ dependencies = [
     "pandas~=2.2.2",
     "python-dotenv~=1.0.1",
     "psycopg~=3.2.1",
+    "sqlalchemy~=2.0.32",
     ]
 
 [project.optional-dependencies]
-analysis = ["scikit-learn~=1.5.1", "numpy~=2.0.0", "ipykernel~=6.29.5", "matplotlib~=3.9.1", "sqlalchemy~=2.0.32", "explainerdashboard~=0.4.7"]
+analysis = ["scikit-learn~=1.5.1", "numpy~=2.0.0", "ipykernel~=6.29.5", "matplotlib~=3.9.1", "explainerdashboard~=0.4.7"]
 dev = ["pre-commit~=3.7.1", "black~=24.4.2", "pylint~=3.2.5", "isort~=5.13.2"]
 interactivegame = ["numpy~=2.0.0", "matplotlib~=3.9.1"]
 
