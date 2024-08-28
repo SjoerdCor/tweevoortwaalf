@@ -539,7 +539,6 @@ diepvries
 dierendag
 dierenrĳk
 dierkunde
-dierproef
 diersoort
 dievenpad
 digestief
@@ -1277,7 +1276,6 @@ maalteken
 maandblad
 maanlicht
 maatbeker
-maatregel
 maatschap
 machinist
 macrofaag
@@ -1692,7 +1690,6 @@ presidium
 prestatie
 pretentie
 preventie
-prĳsvraag
 prikactie
 privilege
 procedure
@@ -1701,7 +1698,6 @@ processor
 procureur
 producent
 productie
-proefdier
 proeftuin
 proefwerk
 professie
@@ -1753,7 +1749,6 @@ rederĳker
 redmiddel
 reflectie
 reflector
-regelmaat
 regelneef
 regenboog
 regenjack
@@ -2072,7 +2067,6 @@ strafkamp
 strafmaat
 strafport
 strafpunt
-strafwerk
 strafworp
 strafzaak
 strategie
@@ -2224,7 +2218,6 @@ trefwoord
 treinstel
 trekpaard
 trektocht
-trekvogel
 treurmars
 treurspel
 treurwilg
@@ -2357,7 +2350,6 @@ voetspoor
 vogelnest
 vogelpest
 vogelspin
-vogeltrek
 voicemail
 voldoende
 volgeling
@@ -2394,7 +2386,6 @@ voorwoord
 vordering
 vormgever
 vouwfiets
-vraagprĳs
 vraagstuk
 vredespĳp
 vredestĳd
@@ -2477,7 +2468,6 @@ werkkamer
 werkkring
 werknemer
 werkpaard
-werkstraf
 werkvloer
 werkwoord
 wetgeving
