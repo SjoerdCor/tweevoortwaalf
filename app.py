@@ -60,9 +60,17 @@ def insert_data(table_name: str, data: dict, return_game_id=False) -> int | None
             return None
 
 
-def probability_option(p: float) -> float:
-    """Get options with probability closest to 50%"""
-    return p - p**2
+def probability_option(p: float, n: float) -> float:
+    """Get weights, to select options with probability closest to 50%
+
+    Parameters
+    ----------
+    p : float
+        The probability of getting the answer right
+    n : float
+        Power: Higher values make values far from 50% less likely to select
+    """
+    return (p - p**2) ** n
 
 
 def clean_str(strng: str) -> str:
@@ -217,7 +225,7 @@ def new_paardensprong():
             puzzleoptions = pd.read_sql_query(
                 "SELECT * FROM paardensprong.puzzleoptions", con=conn
             )
-        p = probability_option(puzzleoptions["probability"])
+        p = probability_option(puzzleoptions["probability"], n=5)
         chosen_puzzle = puzzleoptions.sample(weights=p).squeeze()
         kwargs = {
             "answer": chosen_puzzle["answer"],
