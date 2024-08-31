@@ -3,11 +3,12 @@
 import importlib.resources
 from functools import wraps
 
-import numpy as np
 import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer
 
@@ -23,7 +24,7 @@ ngrams_occurences_total = (
 
 wordlist = pd.read_csv("../tweevoortwaalf/Data/wordlist.csv")
 # There are some duplicates in Word for words including ij, where one occurs very infrequently
-frequency = wordlist.query("Length == 8").groupby("Word")["Frequency"].max()
+frequency = wordlist.query("Length == 8").groupby("Word")["Frequency"].max().dropna()
 
 
 def apply_on_array(func):
@@ -32,7 +33,7 @@ def apply_on_array(func):
     @wraps(func)
     def wrapper(arr):
         outc = [func(x) for x in arr]
-        return np.array(outc).reshape(-1, 1)
+        return pd.Series(outc, index=arr.index)
 
     return wrapper
 
@@ -87,7 +88,7 @@ def wordboundary_on_array(word):
 @apply_on_array
 def calc_frequency(word):
     """Get the frequency of each word in array"""
-    return frequency.get(word)
+    return frequency.get(word, 0)
 
 
 directiontransformer = FunctionTransformer(
@@ -121,7 +122,51 @@ ct = ColumnTransformer(
 )
 
 rf = RandomForestClassifier(
-    n_estimators=1000, max_depth=3, min_samples_leaf=5, random_state=42
+    n_estimators=100, max_depth=3, min_samples_leaf=5, random_state=42, n_jobs=-1
 )
-pipe = Pipeline([("text_prep", ct), ("clf", rf)])
+minimal_columns = [
+    "remainder__NTimesWordSeenBefore",
+    "DirectionTransformer__answerDirectionLogical",
+    "WordBoundaryTransformer__answerBoundaryLogical",
+]
+
+
+# pylint: disable=unused-argument,attribute-defined-outside-init,invalid-name
+class ColumnSelector(BaseEstimator, TransformerMixin):
+    """Allow feature selection by name in GridSearch"""
+
+    def __init__(self, columns):
+        self.columns = columns
+
+    def fit(self, X, y=None):
+        """Fit"""
+        if self.columns == "all":
+            self.columns_ = X.columns.tolist()
+        else:
+            self.columns_ = self.columns
+        return self
+
+    def transform(self, X):
+        """Transform"""
+        return X[self.columns_]
+
+    def get_feature_names_out(self, input_features=None):
+        """Return feature names"""
+        return self.columns_
+
+
+# pylint: enable=unused-argument,attribute-defined-outside-init,invalid-name
+
+column_selector = ColumnSelector("all")
+
+pipe = Pipeline([("text_prep", ct), ("columnselection", column_selector), ("clf", rf)])
 pipe.set_output(transform="pandas")
+param_grid = {
+    "columnselection__columns": [minimal_columns, "all"],
+    "clf__max_depth": [3, 8],
+    "clf__min_samples_leaf": [2, 5, 10],
+}
+
+grid = GridSearchCV(
+    pipe, param_grid, scoring="roc_auc", verbose=3, return_train_score=True
+)
