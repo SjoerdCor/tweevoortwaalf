@@ -21,7 +21,7 @@ function updateResultDiv(data) {
     } else {
         resultHtml += '<p>Incorrect!</p>';
     }
-    const link = `https://www.vandale.nl/gratis-woordenboek/nederlands/betekenis/${answer}`;
+    const link = `https://www.vandale.nl/gratis-woordenboek/nederlands/betekenis/${answer.replace(/\u0133/g, 'ij')}`;
     resultHtml += `<p>The answer is <a href="${link}" target="_blank">${answer}</a></p>`;
     resultDiv.innerHTML = resultHtml;
 }
