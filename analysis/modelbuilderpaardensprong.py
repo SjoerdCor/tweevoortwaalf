@@ -111,11 +111,19 @@ frequencytransformer = FunctionTransformer(
     ],
 )
 
+datetime_transformer = FunctionTransformer(
+    lambda x: pd.DataFrame(x.astype("int64") // 10**9),
+    validate=False,
+    feature_names_out=lambda self, feature_names_in: pd.Index(["start_time"]),
+)
+
+
 ct = ColumnTransformer(
     [
         ("DirectionTransformer", directiontransformer, "answer"),
         ("WordBoundaryTransformer", wordboundarytransformer, "answer"),
         ("FrequencyTransformer", frequencytransformer, "answer"),
+        ("DatetimeTransformer", datetime_transformer, "start_time"),
     ],
     remainder="passthrough",
     force_int_remainder_cols=False,
@@ -129,6 +137,7 @@ minimal_columns = [
     "DirectionTransformer__answerDirectionLogical",
     "WordBoundaryTransformer__answerBoundaryLogical",
 ]
+incl_datetime = minimal_columns + ["DatetimeTransformer__start_time"]
 
 
 # pylint: disable=unused-argument,attribute-defined-outside-init,invalid-name
@@ -162,7 +171,7 @@ column_selector = ColumnSelector("all")
 pipe = Pipeline([("text_prep", ct), ("columnselection", column_selector), ("clf", rf)])
 pipe.set_output(transform="pandas")
 param_grid = {
-    "columnselection__columns": [minimal_columns, "all"],
+    "columnselection__columns": [minimal_columns, incl_datetime, "all"],
     "clf__max_depth": [3, 8],
     "clf__min_samples_leaf": [2, 5, 10],
 }
