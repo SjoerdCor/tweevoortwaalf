@@ -217,21 +217,33 @@ def new_paardensprong():
     if mode == "normal":
         kwargs = {}
     elif mode == "hard":
-        database_url = os.getenv("DATABASE_URL").replace(
-            "postgresql", "postgresql+psycopg"
-        )
-        engine = create_engine(database_url)
+        database_url = os.getenv("DATABASE_URL")
+        engine = create_engine(database_url.replace("postgresql", "postgresql+psycopg"))
         with engine.connect() as conn:
-            puzzleoptions = pd.read_sql_query(
-                "SELECT * FROM paardensprong.puzzleoptions", con=conn
-            )
-        p = probability_option(puzzleoptions["probability"], n=5)
+            puzzleoptions = pd.read_sql_table("paardensprong.puzzleoptions", con=conn)
+
+        p = probability_option(puzzleoptions["probability"], n=10)
         chosen_puzzle = puzzleoptions.sample(weights=p).squeeze()
         kwargs = {
             "answer": chosen_puzzle["answer"],
             "direction": chosen_puzzle["direction"],
             "startpoint": chosen_puzzle["startpoint"],
         }
+
+        # Delete all lines - the puzzle will only return after the basic run is
+        # done again. This is a bit harsh, but is probably good enough for now
+        # pylint: disable=not-context-manager
+        with psycopg.connect(database_url) as conn:
+            with conn.cursor() as cur:
+                query = """
+                        UPDATE paardensprong.puzzleoptions
+                        SET "NTimesWordSeenBefore" = "NTimesWordSeenBefore" + 1,
+                            probability = NULL
+                        WHERE answer = %s;
+                """
+                cur.execute(query, (chosen_puzzle["answer"],))
+                conn.commit()
+
     else:
         raise ValueError(f"Unknown mode {mode!r}")
     return new_puzzle("paardensprong", Paardensprong, **kwargs)
