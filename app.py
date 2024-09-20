@@ -1,6 +1,7 @@
 """"The app to run Twee Voor Twaalf woordrader"""
 
 import datetime
+import logging
 import os
 
 import pandas as pd
@@ -17,6 +18,12 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+logger.setLevel("DEBUG")
 
 
 def insert_data(table_name: str, data: dict, return_game_id=False) -> int | None:
@@ -220,16 +227,20 @@ def new_paardensprong():
         database_url = os.getenv("DATABASE_URL")
         engine = create_engine(database_url.replace("postgresql", "postgresql+psycopg"))
         with engine.connect() as conn:
-            puzzleoptions = pd.read_sql_table("paardensprong.puzzleoptions", con=conn)
+            puzzleoptions = pd.read_sql_table(
+                "puzzleoptions", con=conn, schema="paardensprong"
+            )
 
         p = probability_option(puzzleoptions["probability"], n=10)
         chosen_puzzle = puzzleoptions.sample(weights=p).squeeze()
+        logger.debug(p[puzzleoptions["answer"] == chosen_puzzle["answer"]])
+        logger.debug(puzzleoptions[puzzleoptions["answer"] == chosen_puzzle["answer"]])
         kwargs = {
             "answer": chosen_puzzle["answer"],
             "direction": chosen_puzzle["direction"],
             "startpoint": chosen_puzzle["startpoint"],
         }
-
+        logger.info(kwargs)
         # Delete all lines - the puzzle will only return after the basic run is
         # done again. This is a bit harsh, but is probably good enough for now
         # pylint: disable=not-context-manager
