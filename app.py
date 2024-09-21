@@ -210,6 +210,41 @@ def new_woordrader():
     return response
 
 
+def select_hard_puzzle(name: str) -> dict:
+    """Select a puzzle based on probability of getting it wrong"""
+    database_url = os.getenv("DATABASE_URL")
+    engine = create_engine(database_url.replace("postgresql", "postgresql+psycopg"))
+    with engine.connect() as conn:
+        puzzleoptions = pd.read_sql_table("puzzleoptions", con=conn, schema=name)
+
+    p = probability_option(puzzleoptions["probability"], n=10)
+    chosen_puzzle = puzzleoptions.sample(weights=p).squeeze()
+    logger.debug(p[puzzleoptions["answer"] == chosen_puzzle["answer"]])
+    logger.debug(puzzleoptions[puzzleoptions["answer"] == chosen_puzzle["answer"]])
+    kwargs = {
+        "answer": chosen_puzzle["answer"],
+        "direction": chosen_puzzle["direction"],
+        "startpoint": chosen_puzzle["startpoint"],
+    }
+    logger.info(kwargs)
+    # For now, this word will not be played again until there is a full rerun of predictions
+    # Its a bit harsh, but good enough
+    # TODO: This should actually be done at submit, but that's slightly harder to implement
+    # And does not seem worth the trouble for now
+    # pylint: disable=not-context-manager
+    with psycopg.connect(database_url) as conn:
+        with conn.cursor() as cur:
+            query = f"""
+                    UPDATE {name}.puzzleoptions
+                    SET "NTimesWordSeenBefore" = "NTimesWordSeenBefore" + 1,
+                        probability = NULL
+                    WHERE answer = %s;
+            """
+            cur.execute(query, (chosen_puzzle["answer"],))
+            conn.commit()
+    return kwargs
+
+
 @app.route("/new_taartpuzzel", methods=["POST"])
 def new_taartpuzzel():
     """Create a new taartpuzzel"""
@@ -224,37 +259,7 @@ def new_paardensprong():
     if mode == "normal":
         kwargs = {}
     elif mode == "hard":
-        database_url = os.getenv("DATABASE_URL")
-        engine = create_engine(database_url.replace("postgresql", "postgresql+psycopg"))
-        with engine.connect() as conn:
-            puzzleoptions = pd.read_sql_table(
-                "puzzleoptions", con=conn, schema="paardensprong"
-            )
-
-        p = probability_option(puzzleoptions["probability"], n=10)
-        chosen_puzzle = puzzleoptions.sample(weights=p).squeeze()
-        logger.debug(p[puzzleoptions["answer"] == chosen_puzzle["answer"]])
-        logger.debug(puzzleoptions[puzzleoptions["answer"] == chosen_puzzle["answer"]])
-        kwargs = {
-            "answer": chosen_puzzle["answer"],
-            "direction": chosen_puzzle["direction"],
-            "startpoint": chosen_puzzle["startpoint"],
-        }
-        logger.info(kwargs)
-        # Delete all lines - the puzzle will only return after the basic run is
-        # done again. This is a bit harsh, but is probably good enough for now
-        # pylint: disable=not-context-manager
-        with psycopg.connect(database_url) as conn:
-            with conn.cursor() as cur:
-                query = """
-                        UPDATE paardensprong.puzzleoptions
-                        SET "NTimesWordSeenBefore" = "NTimesWordSeenBefore" + 1,
-                            probability = NULL
-                        WHERE answer = %s;
-                """
-                cur.execute(query, (chosen_puzzle["answer"],))
-                conn.commit()
-
+        kwargs = select_hard_puzzle("paardensprong")
     else:
         raise ValueError(f"Unknown mode {mode!r}")
     return new_puzzle("paardensprong", Paardensprong, **kwargs)
