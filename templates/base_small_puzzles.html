@@ -5,11 +5,22 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/small_puzzles.css') }}">
 {% endblock %}
 
+{% block extrainfogamesetup %}
+<label>
+    <input type="radio" name="mode" value="normal" {% if session.get('mode', 'normal' )=='normal' %}checked{% endif %}>
+    Normal Mode
+</label>
+<label>
+    <input type="radio" name="mode" value="hard" {% if session.get('mode')=='hard' %}checked{% endif %}> Hard Mode
+</label>
+{% endblock %}
+
+
 {% block puzzle %}
 <div class="puzzleimage">
     <svg width="100%" height="100%" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-    {% block puzzleimageframework %}{% endblock %}
-    <g id="puzzlespecific"></g>
+        {% block puzzleimageframework %}{% endblock %}
+        <g id="puzzlespecific"></g>
     </svg>
 </div>
 {% endblock %}

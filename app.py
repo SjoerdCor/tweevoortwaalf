@@ -248,7 +248,15 @@ def select_hard_puzzle(name: str) -> dict:
 @app.route("/new_taartpuzzel", methods=["POST"])
 def new_taartpuzzel():
     """Create a new taartpuzzel"""
-    return new_puzzle("taartpuzzel", Taartpuzzel)
+    mode = request.json.get("mode", "normal")
+    logger.info("New taartpuzzel with mode %s", (mode))
+    if mode == "normal":
+        kwargs = {}
+    elif mode == "hard":
+        kwargs = select_hard_puzzle("taartpuzzel")
+    else:
+        raise ValueError(f"Unknown mode {mode!r}")
+    return new_puzzle("taartpuzzel", Taartpuzzel, **kwargs)
 
 
 @app.route("/new_paardensprong", methods=["POST"])

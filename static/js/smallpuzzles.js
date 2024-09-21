@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     setupGameForm({
-        hasMode: false,
+        hasMode: true,
         puzzleLettersQuery: 'svg text',
         toprowFunctions: false
     });
