@@ -138,7 +138,6 @@ minimal_columns = [
     "WordBoundaryTransformer__answerBoundaryLogical",
     "remainder__IsTaartpuzzel",
 ]
-incl_datetime = minimal_columns + ["DatetimeTransformer__start_time"]
 
 
 # pylint: disable=unused-argument,attribute-defined-outside-init,invalid-name
@@ -172,7 +171,7 @@ column_selector = ColumnSelector("all")
 pipe = Pipeline([("text_prep", ct), ("columnselection", column_selector), ("clf", rf)])
 pipe.set_output(transform="pandas")
 param_grid = {
-    "columnselection__columns": [minimal_columns, incl_datetime, "all"],
+    "columnselection__columns": [minimal_columns, "all"],
     "clf__max_depth": [3, 8],
     "clf__min_samples_leaf": [2, 5, 10],
 }
