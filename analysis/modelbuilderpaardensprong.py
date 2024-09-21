@@ -136,6 +136,7 @@ minimal_columns = [
     "remainder__NTimesWordSeenBefore",
     "DirectionTransformer__answerDirectionLogical",
     "WordBoundaryTransformer__answerBoundaryLogical",
+    "remainder__IsTaartpuzzel",
 ]
 incl_datetime = minimal_columns + ["DatetimeTransformer__start_time"]
 
