@@ -23,9 +23,17 @@ class Woordpuzzel:
             self.select_puzzle()
         else:
             self.answer = answer
-        # TODO: validate correctness of direction and startpoint
+        if direction not in [-1, 1, None]:
+            raise ValueError(f"direction must be either -1 or 1, not {direction}")
         self.direction = direction or random.choice([-1, 1])
-        self.startpoint = startpoint or random.choice(range(self.n_letters))
+        if startpoint not in range(self.n_letters) and startpoint is not None:
+            raise ValueError(
+                f"startpoint must be in range({self.n_letters}) not {startpoint}"
+            )
+        if startpoint is not None:
+            self.startpoint = startpoint
+        else:
+            self.startpoint = random.choice(range(self.n_letters))
         self.guesstime = None
         self.guess = None
         self.correct = None

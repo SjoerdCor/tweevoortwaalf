@@ -14,9 +14,14 @@ class Taartpuzzel(Woordpuzzel):
 
     def __init__(self, missing_letter_index=None, **kwargs):
         super().__init__(**kwargs)
-        self.missing_letter_index = missing_letter_index or random.choice(
-            range(self.n_letters)
-        )
+        if missing_letter_index is not None:
+            if missing_letter_index not in range(self.n_letters):
+                raise ValueError(
+                    f"missing_letter_index must be in range(9), not {missing_letter_index}"
+                )
+            self.missing_letter_index = missing_letter_index
+        else:
+            self.missing_letter_index = random.choice(range(self.n_letters))
 
     def unique_solution(self):
         """Rotations can not lead to an alternative solution"""
