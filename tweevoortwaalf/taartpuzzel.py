@@ -57,12 +57,16 @@ class Taartpuzzel(Woordpuzzel):
 
     def create_puzzle(self):
         """Create the puzzle as list of letter with correct placement"""
+        puzzle_text = (
+            self.answer[: self.missing_letter_index]
+            + "?"
+            + self.answer[self.missing_letter_index + 1 :]
+        )
         endpoint = self.startpoint + self.n_letters * self.direction
         placements = [
-            self.answer[i % self.n_letters]
+            puzzle_text[i % self.n_letters]
             for i in range(self.startpoint, endpoint, self.direction)
         ]
-        placements[self.missing_letter_index] = "?"
         return placements
 
     def show_puzzle(self, puzzle):
