@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extracss %}{% endblock %}
 </head>
+
 <body>
     <div class="new-game-section">
         <form data-new-game-url="{{ new_game_url }}" method="get" id=newGameForm>
@@ -16,7 +18,9 @@
                 <input type="text" id="playername" name="playername" maxlength="15" placeholder="Enter your name">
                 <div class="tooltip">
                     <span class="info-icon">ℹ️</span>
-                    <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next visit! It will also be saved to the database. This field is optional and may be left empty.</span>
+                    <span class="tooltiptext">Enter your name here. It will be saved in your browser for your next
+                        visit! It will also be saved to the database. This field is optional and may be left
+                        empty.</span>
                 </div>
             </div>
             <div id="spelregels">
@@ -29,7 +33,7 @@
 
             {% block extrainfogamesetup %}{% endblock %}
 
-            <button type="submit">New Game</button>
+            <button type="submit" id="newGameButton">New Game</button>
         </form>
     </div>
 
@@ -48,4 +52,5 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block morescripts %}{% endblock %}
 </body>
+
 </html>

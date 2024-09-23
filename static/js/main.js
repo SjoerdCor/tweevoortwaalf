@@ -148,7 +148,8 @@ function handleSubmit() {
             .then(data => {
                 updateResultDiv(data);
             })
-
+        const newGameButton = document.getElementById('newGameButton');
+        newGameButton.focus();
     });
 }
 
