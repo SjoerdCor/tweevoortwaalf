@@ -120,6 +120,9 @@ function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
             .then(() => {
                 enableForm(submitGuessForm);
                 resetTimer(timerDuration, timerElement);
+
+                const guessInput = document.getElementById('guessInput');
+                guessInput.focus();
             });
 
     });
