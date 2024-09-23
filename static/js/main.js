@@ -69,6 +69,21 @@ function makeTopRowClickable() {
     });
 }
 
+function resetTimer(timerDuration, timerElement) {
+    let time = timerDuration;
+    countdown = setInterval(() => {
+        if (time <= 0) {
+            clearInterval(countdown);
+            alert('Time is up!');
+            return;
+        }
+        time--;
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }, 1000);
+}
+
 function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
@@ -101,22 +116,12 @@ function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
                 if (toprowFunctions) {
                     makeTopRowClickable();
                 }
+            })
+            .then(() => {
+                enableForm(submitGuessForm);
+                resetTimer(timerDuration, timerElement);
             });
 
-        enableForm(submitGuessForm);
-
-        let time = timerDuration;
-        countdown = setInterval(() => {
-            if (time <= 0) {
-                clearInterval(countdown);
-                alert('Time is up!');
-                return;
-            }
-            time--;
-            const minutes = Math.floor(time / 60);
-            const seconds = time % 60;
-            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }, 1000);
     });
 }
 
