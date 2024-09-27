@@ -20,17 +20,23 @@ normal: elk vakje heeft een 5% kans om te ontbreken en 5% kans om incorrect te z
 
 {% block extrainfogamesetup %}
 <label>
-    <input type="radio" name="mode" value="normal"
-        {% if session.get('mode', 'normal') == 'normal' %}checked{% endif %}> Normal Mode
+    <input type="radio" name="mode" value="normal" {% if session.get('mode', 'normal' )=='normal' %}checked{% endif %}>
+    Normal Mode
 </label>
 <label>
-    <input type="radio" name="mode" value="easy"
-        {% if session.get('mode') == 'easy' %}checked{% endif %}> Easy Mode
+    <input type="radio" name="mode" value="easy" {% if session.get('mode')=='easy' %}checked{% endif %}> Easy Mode
 </label>
 {% endblock %}
 
+{% block letters_bought %}
+<div class="letters-bought-context">
+    <div>Letters Bought:</div>
+    <div class="cell" id="letters-bought">0</div> <!-- {{ letters_bought_count }} -->
+</div>
+{% endblock %}
+
 {% block puzzle %}
-<div id="puzzlespecific">
+<div id="puzzlespecific" class="woordpanel">
     {% include "woordraderspecific.html" %}
 </div>
 {% endblock %}

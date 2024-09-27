@@ -199,3 +199,21 @@ text {
 .bold {
     font-weight: bold;
 }
+
+.game-context {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.letters-bought-context {
+    text-align: right;
+        /* margin-right: 5px; Adjust spacing to suit your layout */
+}
+.woordpanel {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
