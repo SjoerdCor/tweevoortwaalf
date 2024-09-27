@@ -84,7 +84,7 @@ function resetTimer(timerDuration, timerElement) {
     }, 1000);
 }
 
-function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
+function setupGameForm({ puzzleLettersQuery, toprowFunctions }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
     newGameForm.addEventListener('submit', function (event) {
@@ -92,11 +92,8 @@ function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
         const playername = document.getElementById("playername").value;
         let requestData = { playername: playername };
 
-        if (hasMode) {
-            const checkedRadioButton = document.querySelector('input[name="mode"]:checked');
-            requestData.mode = checkedRadioButton.value;
-        }
-
+        const checkedRadioButton = document.querySelector('input[name="mode"]:checked');
+        requestData.mode = checkedRadioButton.value;
 
         lettersBoughtCount = 0;
         document.getElementById('letters-bought').textContent = lettersBoughtCount;
