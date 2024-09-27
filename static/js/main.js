@@ -27,7 +27,7 @@ function updateResultDiv(data) {
 }
 
 function capitalizeLetterExceptI(letter) {
-    return letter.toLowerCase() === 'i' ? 'i' : letter.toUpperCase();
+    return letter.trim().toLowerCase() === 'i' ? letter : letter.toUpperCase();
 }
 
 function capitalizePuzzleLetters(selector) {
