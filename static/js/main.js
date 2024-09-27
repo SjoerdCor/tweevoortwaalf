@@ -84,7 +84,7 @@ function resetTimer(timerDuration, timerElement) {
     }, 1000);
 }
 
-function setupGameForm({ puzzleLettersQuery, toprowFunctions }) {
+function setupGameForm({ puzzleLettersQuery, toprowFunctions, canBuyLetters }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
     newGameForm.addEventListener('submit', function (event) {
@@ -95,8 +95,10 @@ function setupGameForm({ puzzleLettersQuery, toprowFunctions }) {
         const checkedRadioButton = document.querySelector('input[name="mode"]:checked');
         requestData.mode = checkedRadioButton.value;
 
-        lettersBoughtCount = 0;
-        document.getElementById('letters-bought').textContent = lettersBoughtCount;
+        if (canBuyLetters) {
+            lettersBoughtCount = 0;
+            document.getElementById('letters-bought').textContent = lettersBoughtCount;
+        }
 
         disableForm(newGameForm);
         document.getElementById('guessInput').value = '';

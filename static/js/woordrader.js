@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     setupGameForm({
         puzzleLettersQuery: '#top-row .cell',
-        toprowFunctions: true
+        toprowFunctions: true,
+        canBuyLetters: true,
     });
 }
 );
