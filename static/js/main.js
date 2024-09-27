@@ -1,4 +1,4 @@
-let resultDiv, newGameForm, submitGuessForm, timerElement, countdown;
+let resultDiv, newGameForm, submitGuessForm, timerElement, countdown, lettersBoughtCount;
 function disableForm(form) {
     Array.from(form.elements).forEach(element => {
         element.disabled = true;
@@ -97,6 +97,10 @@ function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
             requestData.mode = checkedRadioButton.value;
         }
 
+
+        lettersBoughtCount = 0;
+        document.getElementById('letters-bought').textContent = lettersBoughtCount;
+
         disableForm(newGameForm);
         document.getElementById('guessInput').value = '';
         resultDiv.innerHTML = '';
@@ -179,6 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function buyLetterEvent(event) {
     const pos = event.currentTarget.getAttribute('data-pos');
     buyLetter(pos);
+
+    lettersBoughtCount++;
+    document.getElementById('letters-bought').textContent = lettersBoughtCount;
+
     disableClickabilityCell(pos);
 }
 
