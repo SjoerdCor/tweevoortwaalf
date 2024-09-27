@@ -101,7 +101,7 @@ function expandNewGameForm() {
     document.getElementById('collapsedInfo').style.display = 'none';
 }
 
-function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
+function setupGameForm({ puzzleLettersQuery, toprowFunctions, canBuyLetters }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
     newGameForm.addEventListener('submit', function (event) {
@@ -109,14 +109,13 @@ function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
         const playername = document.getElementById("playername").value;
         let requestData = { playername: playername };
 
-        if (hasMode) {
-            const checkedRadioButton = document.querySelector('input[name="mode"]:checked');
-            requestData.mode = checkedRadioButton.value;
+        const checkedRadioButton = document.querySelector('input[name="mode"]:checked');
+        requestData.mode = checkedRadioButton.value;
+
+        if (canBuyLetters) {
+            lettersBoughtCount = 0;
+            document.getElementById('letters-bought').textContent = lettersBoughtCount;
         }
-
-
-        lettersBoughtCount = 0;
-        document.getElementById('letters-bought').textContent = lettersBoughtCount;
 
         disableForm(newGameForm);
         collapseNewGameForm(playername, requestData.mode)
