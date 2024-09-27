@@ -143,34 +143,6 @@ function setupGameForm({ puzzleLettersQuery, toprowFunctions, canBuyLetters }) {
     });
 }
 
-function handleSubmit() {
-    submitGuessForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const guess = document.getElementById('guessInput').value;
-        clearInterval(countdown);
-        disableForm(submitGuessForm);
-        makeTopRowNonClickable();
-        expandNewGameForm();
-        enableForm(newGameForm);
-
-        const submitGuessUrl = document.getElementById('submitGuessForm').dataset.submitGuessUrl;
-
-        fetch(submitGuessUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ guess }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                updateResultDiv(data);
-            })
-        const newGameButton = document.getElementById('newGameButton');
-        newGameButton.focus();
-    });
-}
 
 document.addEventListener('DOMContentLoaded', () => {
     resultDiv = document.getElementById('result');
@@ -188,6 +160,35 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('playerName', playerNameInput.value);
     });
 
-    handleSubmit()
+    function addGuessEventListener() {
+        submitGuessForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const guess = document.getElementById('guessInput').value;
+            clearInterval(countdown);
+            disableForm(submitGuessForm);
+            makeTopRowNonClickable();
+            expandNewGameForm();
+            enableForm(newGameForm);
+
+            const submitGuessUrl = document.getElementById('submitGuessForm').dataset.submitGuessUrl;
+
+            fetch(submitGuessUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ guess }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    updateResultDiv(data);
+                })
+            const newGameButton = document.getElementById('newGameButton');
+            newGameButton.focus();
+        });
+    }
+
+    addGuessEventListener()
 
 });
