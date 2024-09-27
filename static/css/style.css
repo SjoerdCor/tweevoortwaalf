@@ -62,7 +62,7 @@ svg {
 }
 
 form {
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 rect {
@@ -148,7 +148,7 @@ text {
 
 .new-game-section {
     margin-bottom: 20px;
-    padding: 15px;
+    padding: 5px;
     border: 2px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
