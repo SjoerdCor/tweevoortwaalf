@@ -94,6 +94,13 @@ function collapseNewGameForm(playerName, mode) {
 
 }
 
+function expandNewGameForm() {
+    document.querySelector('.player-name-section').style.display = 'block';
+    document.getElementById('extraInfoGameSetup').style.display = 'block';
+
+    document.getElementById('collapsedInfo').style.display = 'none';
+}
+
 function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
@@ -151,6 +158,7 @@ function handleSubmit() {
         clearInterval(countdown);
         disableForm(submitGuessForm);
         makeTopRowNonClickable();
+        expandNewGameForm();
         enableForm(newGameForm);
 
         const submitGuessUrl = document.getElementById('submitGuessForm').dataset.submitGuessUrl;
