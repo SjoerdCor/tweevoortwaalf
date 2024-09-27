@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% set timelimit = 30 %}
 
-{% block extracss %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/small_puzzles.css') }}">
-{% endblock %}
-
 {% block extrainfogamesetup %}
 <label>
     <input type="radio" name="mode" value="normal" {% if session.get('mode', 'normal' )=='normal' %}checked{% endif %}>
