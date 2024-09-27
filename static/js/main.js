@@ -44,12 +44,6 @@ function disableClickabilityCell(pos) {
     cell.removeEventListener('click', buyLetterEvent);
 }
 
-function disableSubmitButton() {
-    const submitButton = document.getElementById('submitButton');
-    submitButton.disabled = true;
-    submitButton.style.cursor = 'not-allowed';
-}
-
 function makeTopRowNonClickable() {
     const topRowCells = document.querySelectorAll('#top-row .cell');
     topRowCells.forEach(cell => {
