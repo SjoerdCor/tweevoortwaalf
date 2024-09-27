@@ -85,9 +85,8 @@ function resetTimer(timerDuration, timerElement) {
 }
 
 function collapseNewGameForm(playerName, mode) {
-    document.getElementById('newGameButton').style.display = 'none';
     document.querySelector('.player-name-section').style.display = 'none';
-    document.getElementById('spelregels').style.display = 'none';
+    document.getElementById('extraInfoGameSetup').style.display = 'none';
 
     document.getElementById('displayName').textContent = playerName
     document.getElementById('displayMode').textContent = mode
