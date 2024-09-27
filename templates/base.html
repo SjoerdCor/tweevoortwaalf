@@ -12,7 +12,7 @@
     <div class="container" style="max-width: {% block max_width %}700px{% endblock %};">
 
         <div class="new-game-section">
-            <form data-new-game-url="{{ new_game_url }}" method="get" id=newGameForm>
+            <form data-new-game-url="{{ new_game_url }}" method="get" id="newGameForm">
 
                 <div class="player-name-section">
                     <label for="playername">Player Name:</label>
@@ -36,6 +36,10 @@
 
                 <button type="submit" id="newGameButton">New Game</button>
             </form>
+            <div id="collapsedInfo" style="display: none;">
+                <div><strong id="displayName"></strong></div>
+                <div><strong id="displayMode"></strong> difficulty</div>
+            </div>
         </div>
 
         <div class="game-context">

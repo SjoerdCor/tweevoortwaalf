@@ -84,6 +84,17 @@ function resetTimer(timerDuration, timerElement) {
     }, 1000);
 }
 
+function collapseNewGameForm(playerName, mode) {
+    document.getElementById('newGameButton').style.display = 'none';
+    document.querySelector('.player-name-section').style.display = 'none';
+    document.getElementById('spelregels').style.display = 'none';
+
+    document.getElementById('displayName').textContent = playerName
+    document.getElementById('displayMode').textContent = mode
+    document.getElementById('collapsedInfo').style.display = 'block';
+
+}
+
 function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
     const timerDuration = parseInt(timerElement.dataset.duration);
 
@@ -102,6 +113,7 @@ function setupGameForm({ hasMode, puzzleLettersQuery, toprowFunctions }) {
         document.getElementById('letters-bought').textContent = lettersBoughtCount;
 
         disableForm(newGameForm);
+        collapseNewGameForm(playername, requestData.mode)
         document.getElementById('guessInput').value = '';
         resultDiv.innerHTML = '';
 
