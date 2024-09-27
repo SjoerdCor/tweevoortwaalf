@@ -49,7 +49,7 @@ class Woordpuzzel:
         data_path = importlib.resources.files("tweevoortwaalf.Data").joinpath(
             f"suitable_{self.n_letters}_letter_words.txt"
         )
-        return pd.read_csv(data_path)
+        return pd.read_csv(data_path).squeeze()
 
     @abc.abstractmethod
     def unique_solution(self):

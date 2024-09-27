@@ -2,8 +2,6 @@
 
 import random
 
-import pandas as pd
-
 from .woordpuzzel import Woordpuzzel
 
 
@@ -25,9 +23,7 @@ class Taartpuzzel(Woordpuzzel):
 
     def unique_solution(self):
         """Rotations can not lead to an alternative solution"""
-        otherwords = pd.read_csv(
-            "tweevoortwaalf/Data/suitable_9_letter_words.txt", header=None
-        ).squeeze()
+        otherwords = self.wordlist
         pattern = (
             self.answer[: self.missing_letter_index]
             + "."
