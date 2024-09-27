@@ -2,6 +2,7 @@
 
 import csv
 import datetime
+import importlib
 import os
 import random
 from typing import List, Tuple
@@ -70,9 +71,11 @@ class WoordRader:
 
     def select_puzzle(self):
         """Choose a new word to play"""
-        wordlist = pd.read_csv(
-            "tweevoortwaalf/Data/suitable_12_letter_words.txt", header=None
-        ).squeeze()
+        data_path = importlib.resources.files("tweevoortwaalf.Data").joinpath(
+            f"suitable_{self.n_letters}_letter_words.txt"
+        )
+        wordlist = pd.read_csv(data_path).squeeze()
+
         self.answer = wordlist.sample(1).squeeze()
         self.start_time = datetime.datetime.now()
 
