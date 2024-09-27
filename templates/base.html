@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" style="max-width: {% block max_width %}700px{% endblock %};">
 
         <div class="new-game-section">
             <form data-new-game-url="{{ new_game_url }}" method="get" id=newGameForm>

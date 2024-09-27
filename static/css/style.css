@@ -9,7 +9,6 @@ body {
 }
 
 .container {
-    max-width: 900px;
     margin: 0 auto;
     width: 90%;
     padding: 20px;
@@ -92,12 +91,11 @@ text {
 .grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-gap: 10px;
+    grid-gap: 1px;
     margin-top: 20px;
     width: 100%;
 }
 .cell {
-    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -105,8 +103,9 @@ text {
     border: 2px solid black;
     border-radius: 10px;
     max-width: 50px;
-    min-width: 30px;
+    min-width: 15px;
     flex: 1;
+    aspect-ratio: 1;
 }
 
 .clickable {
