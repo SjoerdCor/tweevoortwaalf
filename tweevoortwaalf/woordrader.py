@@ -46,7 +46,10 @@ class WoordRader:
     n_letters = 12
 
     def __init__(self, answer=None, p_wrong=0.05, p_unknown=0.05):
-        # TODO: input validation
+        if not isinstance(answer, str):
+            raise TypeError(f"Answer must be of class `str`, not {type(answer)}")
+        if len(answer) != 12:
+            raise ValueError(f"Answer must have length 12, untrue for {answer}")
         self.answer = answer
         if self.answer is None:
             self.state = {
@@ -62,7 +65,15 @@ class WoordRader:
         else:
             self._generate_starting_position()
 
+        if p_wrong > 1 or p_wrong < 0:
+            raise ValueError(f"p_wrong must be between 0 and 1, not {p_wrong}")
         self.p_wrong = p_wrong
+        if p_unknown > 1 or p_unknown < 0:
+            raise ValueError(f"p_unknown must be between 0 and 1, not {p_unknown}")
+        if p_unknown + p_wrong > 1:
+            raise ValueError(
+                f"p_unknown and p_wrong must add to 1 at max: {p_unknown}, {p_wrong}"
+            )
         self.p_unknown = p_unknown
 
         self.guess = None
