@@ -19,10 +19,18 @@ class Woordpuzzel:
 
     def __init__(self, answer=None, direction=None, startpoint=None):
         self.start_time = None
-        if answer is None:
-            self.select_puzzle()
-        else:
+
+        if answer is not None:
+            if not isinstance(answer, str):
+                raise TypeError(f"Answer must be of class `str`, not {type(answer)}")
+            if len(answer) != self.n_letters:
+                raise ValueError(
+                    f"Answer must have length {self.n_letters}, untrue for {answer}"
+                )
             self.answer = answer
+        else:
+            self.select_puzzle()
+
         if direction not in [-1, 1, None]:
             raise ValueError(f"direction must be either -1 or 1, not {direction}")
         self.direction = direction or random.choice([-1, 1])

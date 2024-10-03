@@ -1,13 +1,10 @@
 """Class to play the woordrader game from twee voor twaalf"""
 
-import csv
 import datetime
-import importlib
-import os
 import random
 from typing import List, Tuple
 
-import pandas as pd
+from .woordpuzzel import Woordpuzzel
 
 LETTER_OCCURENCE_FIRST_POSITION = {  # based on words of all length
     "b": 0.09775666589860389,
@@ -40,30 +37,13 @@ LETTER_OCCURENCE_FIRST_POSITION = {  # based on words of all length
 }
 
 
-class WoordRader:
+class WoordRader(Woordpuzzel):
     """Class to play the woordrader game from twee voor twaalf"""
 
     n_letters = 12
 
     def __init__(self, answer=None, p_wrong=0.05, p_unknown=0.05):
-        if not isinstance(answer, str):
-            raise TypeError(f"Answer must be of class `str`, not {type(answer)}")
-        if len(answer) != 12:
-            raise ValueError(f"Answer must have length 12, untrue for {answer}")
-        self.answer = answer
-        if self.answer is None:
-            self.state = {
-                i: {
-                    "shown_letter": "",
-                    "answer_position": i,
-                    "bought": False,
-                    "correct": True,
-                    "true_letter": "",
-                }
-                for i in range(12)
-            }
-        else:
-            self._generate_starting_position()
+        super().__init__(answer=answer)
 
         if p_wrong > 1 or p_wrong < 0:
             raise ValueError(f"p_wrong must be between 0 and 1, not {p_wrong}")
@@ -76,19 +56,11 @@ class WoordRader:
             )
         self.p_unknown = p_unknown
 
+        self._generate_starting_position()
+
         self.guess = None
         self.start_time = None
         self.guesstime = None
-
-    def select_puzzle(self):
-        """Choose a new word to play"""
-        data_path = importlib.resources.files("tweevoortwaalf.Data").joinpath(
-            f"suitable_{self.n_letters}_letter_words.txt"
-        )
-        wordlist = pd.read_csv(data_path).squeeze()
-
-        self.answer = wordlist.sample(1).squeeze()
-        self.start_time = datetime.datetime.now()
 
     def _generate_starting_position(self):
         state = {}
@@ -172,7 +144,7 @@ class WoordRader:
         ]
         return top_row
 
-    def show_guess_panel(self):
+    def show_puzzle(self, puzzle):
         """Print the current game state: letters in top and bottom row"""
         top_row = self.get_top_row()
         bottom_row = self.get_bottom_row()
@@ -212,40 +184,11 @@ class WoordRader:
             return top_row_state["answer_position"], top_row_state["true_letter"]
         return top_row_state["answer_position"], "?"
 
-    def make_guess(self, guess):
-        """Handle the guess as made by the user"""
-        self.guesstime = datetime.datetime.now()
-        self.guess = guess.lower().replace("ij", "\u0133")
-        if self.guess == self.answer:
-            print(f"You won! The answer was {self.answer!r}")
-        else:
-            print(f"You lost! The answer was {self.answer!r}, not {guess!r}")
-
-    def _write_to_file(self):
-        output_path = os.path.join("Output", f"{self.__class__.__name__}.csv")
-        file_exists = os.path.isfile(output_path)
-
-        results = {
-            "Answer": self.answer,
-            "Guess": self.guess,
-            "start_time": self.start_time,
-            "Guesstime": self.guesstime,
-        }
-        by_quizposition = dict(sorted(self.state.items()))
-        for quizposition, state in by_quizposition.items():
-            for key, value in state.items():
-                results[f"{quizposition}_{key}"] = value
-        with open(output_path, "a", encoding="utf-8", newline="") as f:
-            w = csv.DictWriter(f, results.keys())
-            if not file_exists:
-                w.writeheader()
-            w.writerow(results)
-
     def play(self, write=True):
         """Play one round of the Woordrader game as text"""
         self.start_time = datetime.datetime.now()
         while self.guess is None:
-            self.show_guess_panel()
+            self.show_puzzle("")
             inp = input("Enter guess or placement of letter to buy")
             try:
                 inp = int(inp)
@@ -255,6 +198,6 @@ class WoordRader:
             if isinstance(inp, int):
                 self.buy_letter(inp)
             else:
-                self.make_guess(inp)
+                self.check_guess(inp)
         if write:
             self._write_to_file()
