@@ -175,7 +175,7 @@ class WoordRader(Woordpuzzel):
                 f"top_row_position must be an int from 1 to {self.n_letters}"
             )
 
-        top_row_state = self.state[top_row_position]
+        top_row_state = self.state[top_row_position - 1]
         if top_row_state["bought"]:
             raise ValueError(f"{top_row_position} already bought!")
 
