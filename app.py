@@ -101,17 +101,13 @@ def home():
 
 @app.route("/woordrader")
 def woordrader():
-    """Home page"""
-    # active = session.get("woordrader", {}).get("active", False)
-    # state = session.get("woordrader", {}).get("state", WoordRader().state)
-    state = WoordRader().state
+    """Show empty woordrader page"""
+    state = {i: "" for i in range(12)}
     active = False
     return render_template(
         "woordrader.html",
         state=state,
         active=active,
-        guess_correct=None,
-        answer=None,
     )
 
 
