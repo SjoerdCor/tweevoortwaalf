@@ -6,6 +6,8 @@ import datetime
 import importlib
 import os
 import random
+from dataclasses import dataclass, field
+from typing import Optional
 
 import pandas as pd
 
@@ -17,7 +19,7 @@ class NonUniqueQuizException(Exception):
 class Woordpuzzel:
     """Base class for paardensprong and taartpuzzel"""
 
-    def __init__(self, answer=None, direction=None, startpoint=None):
+    def __init__(self, answer=None):
         self.start_time = None
 
         if answer is not None:
@@ -31,17 +33,6 @@ class Woordpuzzel:
         else:
             self.select_puzzle()
 
-        if direction not in [-1, 1, None]:
-            raise ValueError(f"direction must be either -1 or 1, not {direction}")
-        self.direction = direction or random.choice([-1, 1])
-        if startpoint not in range(self.n_letters) and startpoint is not None:
-            raise ValueError(
-                f"startpoint must be in range({self.n_letters}) not {startpoint}"
-            )
-        if startpoint is not None:
-            self.startpoint = startpoint
-        else:
-            self.startpoint = random.choice(range(self.n_letters))
         self.guesstime = None
         self.guess = None
         self.correct = None
@@ -118,3 +109,24 @@ class Woordpuzzel:
             print(f"You lost! The answer is {self.answer!r}")
         if write:
             self._write_to_file()
+
+
+@dataclass
+class SmallWoordpuzzelMixin:
+    """Common initialization for 8 and 9 letter puzzles"""
+
+    direction: Optional[int] = field(default=None)
+    startpoint: Optional[int] = field(default=None)
+
+    def __post_init__(self):
+        if self.direction not in [-1, 1, None]:
+            raise ValueError(f"direction must be either -1 or 1, not {self.direction}")
+        self.direction = self.direction or random.choice([-1, 1])
+
+        if self.startpoint not in range(self.n_letters) and self.startpoint is not None:
+            raise ValueError(
+                f"startpoint must be in range({self.n_letters}) not {self.startpoint}"
+            )
+        # self.startpoint can be 0, so boolean check does not work
+        if self.startpoint is None:
+            self.startpoint = random.choice(range(self.n_letters))

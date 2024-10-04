@@ -2,14 +2,18 @@
 
 from typing import List
 
-from .woordpuzzel import Woordpuzzel
+from .woordpuzzel import SmallWoordpuzzelMixin, Woordpuzzel
 
 
-class Paardensprong(Woordpuzzel):
+class Paardensprong(Woordpuzzel, SmallWoordpuzzelMixin):
     """Generate Paardensprong puzzle and show it"""
 
     clockwise_order = [(0, 0), (1, 2), (2, 0), (0, 1), (2, 2), (1, 0), (0, 2), (2, 1)]
     n_letters = 8
+
+    def __init__(self, direction=None, startpoint=None, answer=None):
+        super().__init__(answer=answer)
+        SmallWoordpuzzelMixin.__init__(self, direction=direction, startpoint=startpoint)
 
     def rotate(self, wrd: str, n: int):
         """Start at a different position

@@ -2,16 +2,20 @@
 
 import random
 
-from .woordpuzzel import Woordpuzzel
+from .woordpuzzel import SmallWoordpuzzelMixin, Woordpuzzel
 
 
-class Taartpuzzel(Woordpuzzel):
+class Taartpuzzel(Woordpuzzel, SmallWoordpuzzelMixin):
     """Generate the Taartpuzzle image and show it"""
 
     n_letters = 9
 
-    def __init__(self, missing_letter_index=None, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(
+        self, direction=None, startpoint=None, missing_letter_index=None, answer=None
+    ):
+        super().__init__(answer=answer)
+        SmallWoordpuzzelMixin.__init__(self, direction=direction, startpoint=startpoint)
+
         if missing_letter_index is not None:
             if missing_letter_index not in range(self.n_letters):
                 raise ValueError(
