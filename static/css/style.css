@@ -216,3 +216,33 @@ text {
     display: flex;
     flex-direction: column;
 }
+
+
+.menu-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-items {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 100;
+}
+
+.menu-items a {
+    display: block;
+    padding: 5px 0;
+    text-decoration: none;
+    color: black;
+}
+
+.menu-items a:hover {
+    background-color: #f0f0f0;
+}

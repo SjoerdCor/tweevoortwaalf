@@ -1,4 +1,5 @@
 let resultDiv, newGameForm, submitGuessForm, timerElement, countdown;
+
 function disableForm(form) {
     Array.from(form.elements).forEach(element => {
         element.disabled = true;
@@ -149,6 +150,18 @@ document.addEventListener('DOMContentLoaded', () => {
     newGameForm = document.getElementById('newGameForm');
     submitGuessForm = document.getElementById('submitGuessForm');
     timerElement = document.getElementById('timer');
+
+
+    document.querySelector('.menu-icon').addEventListener('click', function () {
+        var menu = document.getElementById('menu');
+        if (menu.style.display === "none") {
+            menu.style.display = "block";
+        } else {
+            menu.style.display = "none";
+        }
+    });
+
+
 
     const playerNameInput = document.getElementById('playername');
     const savedName = localStorage.getItem('playerName');
