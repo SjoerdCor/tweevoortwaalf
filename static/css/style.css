@@ -9,6 +9,7 @@ body {
 }
 
 .container {
+    position: relative;
     margin: 0 auto;
     width: 90%;
     padding: 20px;
@@ -152,6 +153,7 @@ text {
     border: 2px solid #ddd;
     border-radius: 8px;
     background-color: #f9f9f9;
+    margin-right: 20px;
 }
 
 .player-name-section {
